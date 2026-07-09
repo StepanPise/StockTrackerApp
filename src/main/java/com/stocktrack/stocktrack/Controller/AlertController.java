@@ -4,6 +4,7 @@ import com.stocktrack.stocktrack.Model.Alert;
 import com.stocktrack.stocktrack.Service.AlertService;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
+import org.springframework.http.HttpStatus;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
@@ -26,6 +27,7 @@ public class AlertController {
     }
 
     @PostMapping
+    @ResponseStatus(HttpStatus.CREATED)
     public Alert addAlert(@Valid @RequestBody Alert alert){
         return alertService.addAlert(alert) ;
     }
@@ -36,6 +38,7 @@ public class AlertController {
     }
 
     @DeleteMapping("/{id}")
+    @ResponseStatus(HttpStatus.NO_CONTENT)
     public void deleteAlertById(@PathVariable Long id){
         alertService.deleteAlertById(id);
     }

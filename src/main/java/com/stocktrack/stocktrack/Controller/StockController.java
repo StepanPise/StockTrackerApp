@@ -4,6 +4,7 @@ import com.stocktrack.stocktrack.Model.Stock;
 import com.stocktrack.stocktrack.Service.StockService;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
+import org.springframework.http.HttpStatus;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
@@ -26,6 +27,7 @@ public class StockController {
     }
 
     @PostMapping
+    @ResponseStatus(HttpStatus.CREATED)
     public Stock addStock(@Valid @RequestBody Stock stock){
         return stockService.addStock(stock);
     }
@@ -35,6 +37,7 @@ public class StockController {
         return stockService.updateStockById(id, stock);    }
 
     @DeleteMapping("/{id}")
+    @ResponseStatus(HttpStatus.NO_CONTENT)
     public void deleteStockById(@PathVariable Long id){
         stockService.deleteStockById(id);
     }
