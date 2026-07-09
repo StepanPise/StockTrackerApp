@@ -1,6 +1,8 @@
 package com.stocktrack.stocktrack.Model;
 
 import jakarta.persistence.*;
+import jakarta.validation.constraints.NotBlank;
+import jakarta.validation.constraints.Size;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
@@ -18,6 +20,10 @@ public class Stock {
     @OneToMany(mappedBy = "stock")
     private List<Alert> alerts;
 
+    @NotBlank
     private String name;
+
+    @NotBlank
+    @Size(min = 1, max = 10)
     private String ticker;
 }

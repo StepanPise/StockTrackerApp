@@ -2,6 +2,9 @@ package com.stocktrack.stocktrack.Model;
 
 import com.stocktrack.stocktrack.Model.Enum.RoleType;
 import jakarta.persistence.*;
+import jakarta.validation.constraints.Email;
+import jakarta.validation.constraints.NotBlank;
+import jakarta.validation.constraints.Size;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
@@ -21,10 +24,17 @@ public class User {
     @OneToMany(mappedBy = "user")
     private List<Alert> alerts;
 
+    @Email
+    @NotBlank
     private String email;
+
     @Enumerated(EnumType.STRING)
     private RoleType role;
+
+    @NotBlank
+    @Size(min = 6)
     private String passwordHash;
+
     @CreationTimestamp
     private LocalDateTime createdAt;
 }
