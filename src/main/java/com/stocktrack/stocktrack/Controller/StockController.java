@@ -2,6 +2,7 @@ package com.stocktrack.stocktrack.Controller;
 
 import com.stocktrack.stocktrack.Model.Stock;
 import com.stocktrack.stocktrack.Service.StockService;
+import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.springframework.web.bind.annotation.*;
 
@@ -25,12 +26,12 @@ public class StockController {
     }
 
     @PostMapping
-    public Stock addStock(@RequestBody Stock stock){
+    public Stock addStock(@Valid @RequestBody Stock stock){
         return stockService.addStock(stock);
     }
 
     @PutMapping("/{id}")
-    public Stock updateStockById(@PathVariable Long id, @RequestBody Stock stock){
+    public Stock updateStockById(@PathVariable Long id, @Valid @RequestBody Stock stock){
         return stockService.updateStockById(id, stock);    }
 
     @DeleteMapping("/{id}")

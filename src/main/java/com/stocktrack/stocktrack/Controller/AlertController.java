@@ -2,6 +2,7 @@ package com.stocktrack.stocktrack.Controller;
 
 import com.stocktrack.stocktrack.Model.Alert;
 import com.stocktrack.stocktrack.Service.AlertService;
+import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.springframework.web.bind.annotation.*;
 
@@ -25,12 +26,12 @@ public class AlertController {
     }
 
     @PostMapping
-    public Alert addAlert(@RequestBody Alert alert){
+    public Alert addAlert(@Valid @RequestBody Alert alert){
         return alertService.addAlert(alert) ;
     }
 
     @PutMapping("/{id}")
-    public Alert updateAlertById(@PathVariable Long id, @RequestBody Alert alert){
+    public Alert updateAlertById(@PathVariable Long id, @Valid @RequestBody Alert alert){
         return alertService.updateAlertById(id, alert);
     }
 

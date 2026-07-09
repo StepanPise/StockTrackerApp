@@ -2,6 +2,7 @@ package com.stocktrack.stocktrack.Controller;
 
 import com.stocktrack.stocktrack.Model.User;
 import com.stocktrack.stocktrack.Service.UserService;
+import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.springframework.web.bind.annotation.*;
 
@@ -25,12 +26,12 @@ public class UserController {
     }
 
     @PostMapping
-    public User addUser(@RequestBody User user){
+    public User addUser(@Valid @RequestBody User user){
         return userService.addUser(user);
     }
 
     @PutMapping("/{id}")
-    public User updateUserById(@PathVariable Long id, @RequestBody User user){
+    public User updateUserById(@PathVariable Long id, @Valid @RequestBody User user){
         return userService.updateUserById(id, user);
     }
 
