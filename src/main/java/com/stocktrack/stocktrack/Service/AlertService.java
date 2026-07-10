@@ -23,6 +23,7 @@ public class AlertService {
     private final AlertRepository alertRepository;
     private final UserRepository userRepository;
     private final StockRepository stockRepository;
+    private final MarketDataService marketDataService;
 
     //use LOMBOK insted
 //    public AlertService(AlertRepository alertRepository) {
@@ -48,12 +49,15 @@ public class AlertService {
     public AlertResponseDTO addAlert(AlertRequestDTO requestDto) {
         User user = userRepository.findById(requestDto.getUserId())
                 .orElseThrow(() -> new RuntimeException("User with ID" + requestDto.getUserId() + " doesnt exist."));
-        Stock stock = stockRepository.findByTicker(requestDto.getTicker().orElseGet(() -> {
+        Stock stock = stockRepository.findByTicker(requestDto.getTicker())
+                .orElseGet(() -> {
 
+            //if it doesnt fall, code continues and Saves the new Stock to DB
+            String companyName = marketDataService.getStockName(requestDto.getTicker());
 
             Stock newStock = new Stock();
             newStock.setTicker(requestDto.getTicker());
-            newStock.setName(requestDto.getTicker());
+            newStock.setName(companyName);
             return stockRepository.save(newStock);
         });
 
@@ -72,8 +76,14 @@ public class AlertService {
 
         User user = userRepository.findById(requestDto.getUserId())
                 .orElseThrow(() -> new RuntimeException("User with ID" + requestDto.getUserId() + " doesnt exist."));
-        Stock stock = stockRepository.findById(requestDto.getStockId())
-                .orElseThrow(() -> new RuntimeException("Stock with ID " + requestDto.getStockId() + " doesnt exist."));
+        Stock stock = stockRepository.findByTicker(requestDto.getTicker())
+                .orElseGet(() -> {
+                    String companyName = marketDataService.getStockName(requestDto.getTicker());
+                    Stock newStock = new Stock();
+                    newStock.setTicker(requestDto.getTicker());
+                    newStock.setName(companyName);
+                    return stockRepository.save(newStock);
+                });
 
         existingAlert.setName(requestDto.getName());
         existingAlert.setTargetPrice(requestDto.getTargetPrice());
