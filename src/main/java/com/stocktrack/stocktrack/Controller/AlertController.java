@@ -1,5 +1,7 @@
 package com.stocktrack.stocktrack.Controller;
 
+import com.stocktrack.stocktrack.DTO.AlertRequestDTO;
+import com.stocktrack.stocktrack.DTO.AlertResponseDTO;
 import com.stocktrack.stocktrack.Model.Alert;
 import com.stocktrack.stocktrack.Service.AlertService;
 import jakarta.validation.Valid;
@@ -17,23 +19,23 @@ public class AlertController {
     private final AlertService alertService;
 
     @GetMapping
-    public List<Alert> getAllAlerts() {
+    public List<AlertResponseDTO> getAllAlerts() {
         return alertService.getAllAlerts();
     }
 
     @GetMapping("/{id}")
-    public Alert getAlertById(@PathVariable Long id){
+    public AlertResponseDTO getAlertById(@PathVariable Long id){
         return alertService.getAlertById(id);
     }
 
     @PostMapping
     @ResponseStatus(HttpStatus.CREATED)
-    public Alert addAlert(@Valid @RequestBody Alert alert){
+    public AlertResponseDTO addAlert(@Valid @RequestBody AlertRequestDTO alert){
         return alertService.addAlert(alert) ;
     }
 
     @PutMapping("/{id}")
-    public Alert updateAlertById(@PathVariable Long id, @Valid @RequestBody Alert alert){
+    public AlertResponseDTO updateAlertById(@PathVariable Long id, @Valid @RequestBody AlertRequestDTO alert){
         return alertService.updateAlertById(id, alert);
     }
 

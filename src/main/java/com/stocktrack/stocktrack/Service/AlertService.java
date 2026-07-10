@@ -1,12 +1,19 @@
 package com.stocktrack.stocktrack.Service;
 
+import com.stocktrack.stocktrack.DTO.AlertRequestDTO;
+import com.stocktrack.stocktrack.DTO.AlertResponseDTO;
+import com.stocktrack.stocktrack.Mapper.AlertMapper;
 import com.stocktrack.stocktrack.Model.Alert;
+import com.stocktrack.stocktrack.Model.Stock;
+import com.stocktrack.stocktrack.Model.User;
 import com.stocktrack.stocktrack.Repository.AlertRepository;
 import com.stocktrack.stocktrack.Repository.StockRepository;
+import com.stocktrack.stocktrack.Repository.UserRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
+import java.util.stream.Collectors;
 
 
 @Service
@@ -14,37 +21,61 @@ import java.util.List;
 public class AlertService {
 
     private final AlertRepository alertRepository;
+    private final UserRepository userRepository;
+    private final StockRepository stockRepository;
 
     //use LOMBOK insted
 //    public AlertService(AlertRepository alertRepository) {
 //        this.alertRepository = alertRepository;
 //    }
 
-    public List<Alert> getAllAlerts() {
-        return alertRepository.findAll();
-    }
-
-    public Alert addAlert(Alert alert) {
-         return alertRepository.save(alert);
-    }
-
-    public void deleteAlertById(Long id) {
-        Alert alert = getAlertById(id);
-        alertRepository.delete(alert);
-    }
-
-    public Alert getAlertById(Long id) {
+    private Alert getAlertEntityById(Long id) {
         return alertRepository.findById(id)
                 .orElseThrow(() -> new RuntimeException("Alert with ID " + id + " does not exist."));
     }
 
-    public Alert updateAlertById(Long id, Alert updatedAlert) {
-        Alert existingAlert = getAlertById(id);
+    public List<AlertResponseDTO> getAllAlerts() {
+        return alertRepository.findAll().stream()
+                .map(AlertMapper::mapToResponseDTO)
+                .collect(Collectors.toList());
+    }
 
-        existingAlert.setName(updatedAlert.getName());
-        existingAlert.setTargetPrice(updatedAlert.getTargetPrice());
-        existingAlert.setConditionType(updatedAlert.getConditionType());
+    public AlertResponseDTO getAlertById(Long id) {
+        Alert alert = getAlertEntityById(id);
+        return AlertMapper.mapToResponseDTO(alert);
+    }
 
-        return alertRepository.save(existingAlert);
+    public AlertResponseDTO addAlert(AlertRequestDTO requestDto) {
+        User user = userRepository.findById(requestDto.getUserId())
+                .orElseThrow(() -> new RuntimeException("User with ID" + requestDto.getUserId() + " doesnt exist."));
+        Stock stock = stockRepository.findById(requestDto.getStockId())
+                .orElseThrow(() -> new RuntimeException("Stock with ID " + requestDto.getStockId() + " doesnt exist."));
+
+        Alert alertToSave = AlertMapper.mapToEntity(requestDto, user, stock);
+        Alert savedAlert = alertRepository.save(alertToSave);
+
+        return AlertMapper.mapToResponseDTO(savedAlert);    }
+
+    public void deleteAlertById(Long id) {
+        Alert alert = getAlertEntityById(id);
+        alertRepository.delete(alert);
+    }
+
+    public AlertResponseDTO updateAlertById(Long id, AlertRequestDTO requestDto) {
+        Alert existingAlert = getAlertEntityById(id);
+
+        User user = userRepository.findById(requestDto.getUserId())
+                .orElseThrow(() -> new RuntimeException("User with ID" + requestDto.getUserId() + " doesnt exist."));
+        Stock stock = stockRepository.findById(requestDto.getStockId())
+                .orElseThrow(() -> new RuntimeException("Stock with ID " + requestDto.getStockId() + " doesnt exist."));
+
+        existingAlert.setName(requestDto.getName());
+        existingAlert.setTargetPrice(requestDto.getTargetPrice());
+        existingAlert.setConditionType(requestDto.getConditionType());
+        existingAlert.setUser(user);
+        existingAlert.setStock(stock);
+
+        Alert savedAlert = alertRepository.save(existingAlert);
+        return AlertMapper.mapToResponseDTO(savedAlert);
     }
 }
