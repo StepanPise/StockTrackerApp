@@ -22,6 +22,6 @@ public class AlertRequestDTO {
     @NotNull
     private Long userId;
 
-    @NotNull
-    private Long stockId;
+    @NotBlank
+    private String ticker;
 }

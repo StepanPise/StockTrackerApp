@@ -2,6 +2,7 @@ package com.stocktrack.stocktrack.Controller;
 
 import com.stocktrack.stocktrack.DTO.StockResponseDTO;
 import com.stocktrack.stocktrack.Model.Stock;
+import com.stocktrack.stocktrack.Service.MarketDataService;
 import com.stocktrack.stocktrack.Service.StockService;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
@@ -16,11 +17,18 @@ import java.util.List;
 public class StockController {
 
     private final StockService stockService;
+    private final MarketDataService marketDataService;
 
     @GetMapping
     public List<StockResponseDTO> getAllStocks(){
         return stockService.getAllStocks();
     }
+
+    @GetMapping("/price/{ticker}")
+    public double givePrice(@PathVariable String ticker){
+        return marketDataService.getCurrentPrice(ticker);
+    }
+
 
     @GetMapping("/{id}")
     public StockResponseDTO getStockById(@PathVariable Long id){
@@ -42,4 +50,6 @@ public class StockController {
     public void deleteStockById(@PathVariable Long id){
         stockService.deleteStockById(id);
     }
+
+
 }

@@ -48,8 +48,14 @@ public class AlertService {
     public AlertResponseDTO addAlert(AlertRequestDTO requestDto) {
         User user = userRepository.findById(requestDto.getUserId())
                 .orElseThrow(() -> new RuntimeException("User with ID" + requestDto.getUserId() + " doesnt exist."));
-        Stock stock = stockRepository.findById(requestDto.getStockId())
-                .orElseThrow(() -> new RuntimeException("Stock with ID " + requestDto.getStockId() + " doesnt exist."));
+        Stock stock = stockRepository.findByTicker(requestDto.getTicker().orElseGet(() -> {
+
+
+            Stock newStock = new Stock();
+            newStock.setTicker(requestDto.getTicker());
+            newStock.setName(requestDto.getTicker());
+            return stockRepository.save(newStock);
+        });
 
         Alert alertToSave = AlertMapper.mapToEntity(requestDto, user, stock);
         Alert savedAlert = alertRepository.save(alertToSave);
