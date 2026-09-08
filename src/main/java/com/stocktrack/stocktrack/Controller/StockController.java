@@ -1,7 +1,8 @@
 package com.stocktrack.stocktrack.Controller;
 
-import com.stocktrack.stocktrack.DTO.StockResponseDTO;
-import com.stocktrack.stocktrack.Model.Stock;
+import com.stocktrack.stocktrack.DTO.Request.StockRequestDTO;
+import com.stocktrack.stocktrack.DTO.Response.StockResponseDTO;
+import com.stocktrack.stocktrack.Entity.Stock;
 import com.stocktrack.stocktrack.Service.MarketDataService;
 import com.stocktrack.stocktrack.Service.StockService;
 import jakarta.validation.Valid;
@@ -37,13 +38,13 @@ public class StockController {
 
     @PostMapping
     @ResponseStatus(HttpStatus.CREATED)
-    public StockResponseDTO addStock(@Valid @RequestBody Stock stock){
-        return stockService.addStock(stock);
+    public StockResponseDTO addStock(@Valid @RequestBody StockRequestDTO stockRequestDTO){
+        return stockService.addStock(stockRequestDTO);
     }
 
     @PutMapping("/{id}")
-    public StockResponseDTO updateStockById(@PathVariable Long id, @Valid @RequestBody Stock stock){
-        return stockService.updateStockById(id, stock);    }
+    public StockResponseDTO updateStockById(@PathVariable Long id, @Valid @RequestBody StockRequestDTO stockRequestDTO){
+        return stockService.updateStockById(id, stockRequestDTO);    }
 
     @DeleteMapping("/{id}")
     @ResponseStatus(HttpStatus.NO_CONTENT)

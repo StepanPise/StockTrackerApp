@@ -1,8 +1,9 @@
 package com.stocktrack.stocktrack.Service;
 
-import com.stocktrack.stocktrack.DTO.UserResponseDTO;
+import com.stocktrack.stocktrack.DTO.Request.UserRequestDTO;
+import com.stocktrack.stocktrack.DTO.Response.UserResponseDTO;
 import com.stocktrack.stocktrack.Mapper.UserMapper;
-import com.stocktrack.stocktrack.Model.User;
+import com.stocktrack.stocktrack.Entity.User;
 import com.stocktrack.stocktrack.Repository.UserRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
@@ -31,16 +32,16 @@ public class UserService {
         return UserMapper.mapToResponseDTO(getUserEntityById(id));
     }
 
-    public UserResponseDTO addUser(User user) {
+    public UserResponseDTO addUser(UserRequestDTO userRequestDTO) {
+        User user = UserMapper.mapToEntity(userRequestDTO);
         return UserMapper.mapToResponseDTO(userRepository.save(user));
     }
 
-    public UserResponseDTO updateUserById(Long id, User updatedUser) {
+    public UserResponseDTO updateUserById(Long id, UserRequestDTO requestDTO) {
         User existingUser = getUserEntityById(id);
 
-        existingUser.setEmail(updatedUser.getEmail());
-        existingUser.setRole(updatedUser.getRole());
-        //add update passwd later
+        existingUser.setEmail(requestDTO.getEmail());
+        existingUser.setPasswordHash(requestDTO.getPassword());// passwd to hash?
 
         return UserMapper.mapToResponseDTO(userRepository.save(existingUser));
     }

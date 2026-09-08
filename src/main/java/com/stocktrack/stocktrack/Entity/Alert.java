@@ -1,10 +1,7 @@
-package com.stocktrack.stocktrack.Model;
+package com.stocktrack.stocktrack.Entity;
 
-import com.stocktrack.stocktrack.Model.Enum.ConditionType;
+import com.stocktrack.stocktrack.Entity.Enum.ConditionType;
 import jakarta.persistence.*;
-import jakarta.validation.constraints.NotBlank;
-import jakarta.validation.constraints.NotNull;
-import jakarta.validation.constraints.Positive;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
@@ -15,6 +12,7 @@ import java.time.LocalDateTime;
 @Entity
 @Getter @Setter
 @NoArgsConstructor
+@Table(name = "alerts")
 public class Alert {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -28,17 +26,18 @@ public class Alert {
     @JoinColumn(name = "stock_id", nullable = false)
     private Stock stock;
 
-    @NotBlank
+    @Column(nullable = false, length = 100)
     private String name;
 
-    @Positive
+    @Column(nullable = false)
     private double targetPrice;
 
     @Enumerated(EnumType.STRING)
-    @NotNull
+    @Column(nullable = false)
     private ConditionType conditionType;
 
     @CreationTimestamp
+    @Column(nullable = false, updatable = false)
     private LocalDateTime createdAt;
 
 }

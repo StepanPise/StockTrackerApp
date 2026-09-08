@@ -16,6 +16,8 @@ public class MarketDataService {
     @Value("${finnhub.api.profile.url}")
     private String nameApiUrl;
 
+
+    //Inject restTemplate (dont create it with "new")
     private final RestTemplate restTemplate = new RestTemplate();
 
     public double getCurrentPrice(String ticker) {

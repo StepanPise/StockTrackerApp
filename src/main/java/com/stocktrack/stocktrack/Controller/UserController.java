@@ -1,7 +1,8 @@
 package com.stocktrack.stocktrack.Controller;
 
-import com.stocktrack.stocktrack.DTO.UserResponseDTO;
-import com.stocktrack.stocktrack.Model.User;
+import com.stocktrack.stocktrack.DTO.Request.UserRequestDTO;
+import com.stocktrack.stocktrack.DTO.Response.UserResponseDTO;
+import com.stocktrack.stocktrack.Entity.User;
 import com.stocktrack.stocktrack.Service.UserService;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
@@ -29,13 +30,13 @@ public class UserController {
 
     @PostMapping
     @ResponseStatus(HttpStatus.CREATED)
-    public UserResponseDTO addUser(@Valid @RequestBody User user){
-        return userService.addUser(user);
+    public UserResponseDTO addUser(@Valid @RequestBody UserRequestDTO userRequestDTO){
+        return userService.addUser(userRequestDTO);
     }
 
     @PutMapping("/{id}")
-    public UserResponseDTO updateUserById(@PathVariable Long id, @Valid @RequestBody User user){
-        return userService.updateUserById(id, user);
+    public UserResponseDTO updateUserById(@PathVariable Long id, @Valid @RequestBody UserRequestDTO userRequestDTO){
+        return userService.updateUserById(id, userRequestDTO);
     }
 
     @DeleteMapping("/{id}")

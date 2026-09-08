@@ -1,11 +1,11 @@
 package com.stocktrack.stocktrack.Service;
 
-import com.stocktrack.stocktrack.DTO.AlertRequestDTO;
-import com.stocktrack.stocktrack.DTO.AlertResponseDTO;
+import com.stocktrack.stocktrack.DTO.Request.AlertRequestDTO;
+import com.stocktrack.stocktrack.DTO.Response.AlertResponseDTO;
 import com.stocktrack.stocktrack.Mapper.AlertMapper;
-import com.stocktrack.stocktrack.Model.Alert;
-import com.stocktrack.stocktrack.Model.Stock;
-import com.stocktrack.stocktrack.Model.User;
+import com.stocktrack.stocktrack.Entity.Alert;
+import com.stocktrack.stocktrack.Entity.Stock;
+import com.stocktrack.stocktrack.Entity.User;
 import com.stocktrack.stocktrack.Repository.AlertRepository;
 import com.stocktrack.stocktrack.Repository.StockRepository;
 import com.stocktrack.stocktrack.Repository.UserRepository;

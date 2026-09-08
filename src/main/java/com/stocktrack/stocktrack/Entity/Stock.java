@@ -1,4 +1,4 @@
-package com.stocktrack.stocktrack.Model;
+package com.stocktrack.stocktrack.Entity;
 
 import jakarta.persistence.*;
 import jakarta.validation.constraints.NotBlank;
@@ -7,6 +7,7 @@ import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
 
+import java.util.ArrayList;
 import java.util.List;
 
 @Entity
@@ -18,12 +19,11 @@ public class Stock {
     private Long id;
 
     @OneToMany(mappedBy = "stock", cascade = CascadeType.ALL, orphanRemoval = true)
-    private List<Alert> alerts;
+    private List<Alert> alerts = new ArrayList<>();
 
-    @NotBlank
+    @Column(nullable = false, length = 100)
     private String name;
 
-    @NotBlank
-    @Size(min = 1, max = 10)
+    @Column(nullable = false, unique = true, length = 10)
     private String ticker;
 }

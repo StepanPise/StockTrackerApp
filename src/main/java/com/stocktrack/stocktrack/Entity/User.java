@@ -1,6 +1,6 @@
-package com.stocktrack.stocktrack.Model;
+package com.stocktrack.stocktrack.Entity;
 
-import com.stocktrack.stocktrack.Model.Enum.RoleType;
+import com.stocktrack.stocktrack.Entity.Enum.RoleType;
 import jakarta.persistence.*;
 import jakarta.validation.constraints.Email;
 import jakarta.validation.constraints.NotBlank;
@@ -11,6 +11,7 @@ import lombok.Setter;
 import org.hibernate.annotations.CreationTimestamp;
 
 import java.time.LocalDateTime;
+import java.util.ArrayList;
 import java.util.List;
 
 @Entity
@@ -18,24 +19,25 @@ import java.util.List;
 @NoArgsConstructor
 @Table(name = "users")
 public class User {
+
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
-    @OneToMany(mappedBy = "user", cascade = CascadeType.ALL, orphanRemoval = true)
-    private List<Alert> alerts;
-
-    @Email
-    @NotBlank
+    @Column(nullable = false, unique = true, length = 150)
     private String email;
 
-    @Enumerated(EnumType.STRING)
-    private RoleType role;
-
-    @NotBlank
-    @Size(min = 6)
+    @Column(nullable = false, length = 60)
     private String passwordHash;
 
+    @Enumerated(EnumType.STRING)
+    @Column(nullable = false)
+    private RoleType role = RoleType.USER; //safe default valuee
+
+    @OneToMany(mappedBy = "user", cascade = CascadeType.ALL, orphanRemoval = true)
+    private List<Alert> alerts = new ArrayList<>(); //safe default valuee
+
     @CreationTimestamp
+    @Column(nullable = false, updatable = false)
     private LocalDateTime createdAt;
 }

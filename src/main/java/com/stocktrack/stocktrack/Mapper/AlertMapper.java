@@ -1,10 +1,10 @@
 package com.stocktrack.stocktrack.Mapper;
 
-import com.stocktrack.stocktrack.DTO.AlertRequestDTO;
-import com.stocktrack.stocktrack.DTO.AlertResponseDTO;
-import com.stocktrack.stocktrack.Model.Alert;
-import com.stocktrack.stocktrack.Model.Stock;
-import com.stocktrack.stocktrack.Model.User;
+import com.stocktrack.stocktrack.DTO.Request.AlertRequestDTO;
+import com.stocktrack.stocktrack.DTO.Response.AlertResponseDTO;
+import com.stocktrack.stocktrack.Entity.Alert;
+import com.stocktrack.stocktrack.Entity.Stock;
+import com.stocktrack.stocktrack.Entity.User;
 
 public class AlertMapper {
     public static AlertResponseDTO mapToResponseDTO(Alert alert) {

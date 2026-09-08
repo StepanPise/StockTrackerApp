@@ -1,4 +1,4 @@
-package com.stocktrack.stocktrack.Model.Enum;
+package com.stocktrack.stocktrack.Entity.Enum;
 
 public enum ConditionType {
     ABOVE, BELOW

@@ -1,8 +1,7 @@
 package com.stocktrack.stocktrack.Controller;
 
-import com.stocktrack.stocktrack.DTO.AlertRequestDTO;
-import com.stocktrack.stocktrack.DTO.AlertResponseDTO;
-import com.stocktrack.stocktrack.Model.Alert;
+import com.stocktrack.stocktrack.DTO.Request.AlertRequestDTO;
+import com.stocktrack.stocktrack.DTO.Response.AlertResponseDTO;
 import com.stocktrack.stocktrack.Service.AlertService;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;

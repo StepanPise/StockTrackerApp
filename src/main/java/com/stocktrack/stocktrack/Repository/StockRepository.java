@@ -1,6 +1,6 @@
 package com.stocktrack.stocktrack.Repository;
 
-import com.stocktrack.stocktrack.Model.Stock;
+import com.stocktrack.stocktrack.Entity.Stock;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.stereotype.Repository;
 
