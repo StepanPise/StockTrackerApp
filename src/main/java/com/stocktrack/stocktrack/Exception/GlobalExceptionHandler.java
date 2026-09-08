@@ -31,9 +31,24 @@ public class GlobalExceptionHandler {
 
     @ExceptionHandler(DataIntegrityViolationException.class)
     public ResponseEntity<Map<String, String>> handleDataIntegrityViolationException(DataIntegrityViolationException ex) {
+        String causeMessage = ex.getMostSpecificCause().getMessage();
+        String messageLower = (causeMessage != null) ? causeMessage.toLowerCase() : "";
+
+        if (messageLower.contains("unique") || messageLower.contains("duplicate")) {
+            return ResponseEntity
+                    .status(HttpStatus.CONFLICT)
+                    .body(Map.of("error", "A duplicate value violates unique constraint."));
+        }
+
+        if (messageLower.contains("foreign key") || messageLower.contains("violates foreign key")) {
+            return ResponseEntity
+                    .status(HttpStatus.BAD_REQUEST)
+                    .body(Map.of("error", "Referenced record does not exist. Check provided IDs."));
+        }
+
         return ResponseEntity
                 .status(HttpStatus.BAD_REQUEST)
-                .body(Map.of("error", "ID doesn't exist."));
+                .body(Map.of("error", "Database constraint violation."));
     }
 
     @ExceptionHandler(RuntimeException.class)

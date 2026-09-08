@@ -24,8 +24,9 @@ public class AlertService {
     private final UserRepository userRepository;
     private final StockRepository stockRepository;
     private final MarketDataService marketDataService;
-
-    //use LOMBOK insted
+    private final AlertMapper alertMapper;
+    
+//use LOMBOK insted
 //    public AlertService(AlertRepository alertRepository) {
 //        this.alertRepository = alertRepository;
 //    }
@@ -37,13 +38,13 @@ public class AlertService {
 
     public List<AlertResponseDTO> getAllAlerts() {
         return alertRepository.findAll().stream()
-                .map(AlertMapper::mapToResponseDTO)
+                .map(alertMapper::mapToResponseDTO)
                 .collect(Collectors.toList());
     }
 
     public AlertResponseDTO getAlertById(Long id) {
         Alert alert = getAlertEntityById(id);
-        return AlertMapper.mapToResponseDTO(alert);
+        return alertMapper.mapToResponseDTO(alert);
     }
 
     public AlertResponseDTO addAlert(AlertRequestDTO requestDto) {
@@ -61,10 +62,10 @@ public class AlertService {
             return stockRepository.save(newStock);
         });
 
-        Alert alertToSave = AlertMapper.mapToEntity(requestDto, user, stock);
+        Alert alertToSave = alertMapper.mapToEntity(requestDto, user, stock);
         Alert savedAlert = alertRepository.save(alertToSave);
 
-        return AlertMapper.mapToResponseDTO(savedAlert);    }
+        return alertMapper.mapToResponseDTO(savedAlert);    }
 
     public void deleteAlertById(Long id) {
         Alert alert = getAlertEntityById(id);
@@ -92,6 +93,6 @@ public class AlertService {
         existingAlert.setStock(stock);
 
         Alert savedAlert = alertRepository.save(existingAlert);
-        return AlertMapper.mapToResponseDTO(savedAlert);
+        return alertMapper.mapToResponseDTO(savedAlert);
     }
 }

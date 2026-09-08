@@ -16,6 +16,7 @@ import java.util.stream.Collectors;
 public class UserService {
 
     private final UserRepository userRepository;
+    private final UserMapper userMapper;
 
     private User getUserEntityById(Long id) {
         return userRepository.findById(id)
@@ -24,17 +25,17 @@ public class UserService {
 
     public List<UserResponseDTO> getAllUsers() {
         return userRepository.findAll().stream()
-                .map(UserMapper::mapToResponseDTO)
+                .map(userMapper::mapToResponseDTO)
                 .collect(Collectors.toList());
     }
 
     public UserResponseDTO getUserById(Long id) {
-        return UserMapper.mapToResponseDTO(getUserEntityById(id));
+        return userMapper.mapToResponseDTO(getUserEntityById(id));
     }
 
     public UserResponseDTO addUser(UserRequestDTO userRequestDTO) {
-        User user = UserMapper.mapToEntity(userRequestDTO);
-        return UserMapper.mapToResponseDTO(userRepository.save(user));
+        User user = userMapper.mapToEntity(userRequestDTO);
+        return userMapper.mapToResponseDTO(userRepository.save(user));
     }
 
     public UserResponseDTO updateUserById(Long id, UserRequestDTO requestDTO) {
@@ -43,7 +44,7 @@ public class UserService {
         existingUser.setEmail(requestDTO.getEmail());
         existingUser.setPasswordHash(requestDTO.getPassword());// passwd to hash?
 
-        return UserMapper.mapToResponseDTO(userRepository.save(existingUser));
+        return userMapper.mapToResponseDTO(userRepository.save(existingUser));
     }
 
     public void deleteUserById(Long id) {

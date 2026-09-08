@@ -2,8 +2,8 @@ package com.stocktrack.stocktrack.Service;
 
 import com.stocktrack.stocktrack.DTO.Request.StockRequestDTO;
 import com.stocktrack.stocktrack.DTO.Response.StockResponseDTO;
-import com.stocktrack.stocktrack.Mapper.StockMapper;
 import com.stocktrack.stocktrack.Entity.Stock;
+import com.stocktrack.stocktrack.Mapper.StockMapper;
 import com.stocktrack.stocktrack.Repository.StockRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
@@ -16,6 +16,7 @@ import java.util.stream.Collectors;
 public class StockService {
 
     private final StockRepository stockRepository;
+    private final StockMapper stockMapper;
 
     private Stock getStockEntityById(Long id) {
         return stockRepository.findById(id)
@@ -24,16 +25,16 @@ public class StockService {
 
     public List<StockResponseDTO> getAllStocks() {
         return stockRepository.findAll().stream()
-                .map(StockMapper::mapToResponseDTO)
+                .map(stockMapper::mapToResponseDTO)
                 .collect(Collectors.toList());    }
 
     public StockResponseDTO getStockById(Long id) {
-        return StockMapper.mapToResponseDTO(getStockEntityById(id));
+        return stockMapper.mapToResponseDTO(getStockEntityById(id));
     }
 
     public StockResponseDTO addStock(StockRequestDTO stockRequestDTO) {
-        Stock stock = StockMapper.mapToEntity(stockRequestDTO);
-        return StockMapper.mapToResponseDTO(stockRepository.save(stock));
+        Stock stock = stockMapper.mapToEntity(stockRequestDTO);
+        return stockMapper.mapToResponseDTO(stockRepository.save(stock));
     }
 
     public void deleteStockById(Long id) {
@@ -47,7 +48,7 @@ public class StockService {
         existingStock.setName(stockRequestDTO.getName());
         existingStock.setTicker(stockRequestDTO.getTicker());
 
-        return StockMapper.mapToResponseDTO(stockRepository.save(existingStock));
+        return stockMapper.mapToResponseDTO(stockRepository.save(existingStock));
     }
 
 }

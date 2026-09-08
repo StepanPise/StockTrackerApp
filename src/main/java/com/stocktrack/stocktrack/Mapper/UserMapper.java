@@ -3,9 +3,11 @@ package com.stocktrack.stocktrack.Mapper;
 import com.stocktrack.stocktrack.DTO.Request.UserRequestDTO;
 import com.stocktrack.stocktrack.DTO.Response.UserResponseDTO;
 import com.stocktrack.stocktrack.Entity.User;
+import org.springframework.stereotype.Component;
 
+@Component
 public class UserMapper {
-    public static UserResponseDTO mapToResponseDTO(User user) {
+    public UserResponseDTO mapToResponseDTO(User user) {
         UserResponseDTO dto = new UserResponseDTO();
         dto.setId(user.getId());
         dto.setEmail(user.getEmail());
@@ -13,7 +15,7 @@ public class UserMapper {
         return dto;
     }
 
-    public static User mapToEntity(UserRequestDTO dto) {
+    public User mapToEntity(UserRequestDTO dto) {
         User user = new User();
         user.setEmail(dto.getEmail());
         user.setPasswordHash(dto.getPassword());//hash later

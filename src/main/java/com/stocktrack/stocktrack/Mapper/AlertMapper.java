@@ -5,9 +5,11 @@ import com.stocktrack.stocktrack.DTO.Response.AlertResponseDTO;
 import com.stocktrack.stocktrack.Entity.Alert;
 import com.stocktrack.stocktrack.Entity.Stock;
 import com.stocktrack.stocktrack.Entity.User;
+import org.springframework.stereotype.Component;
 
+@Component
 public class AlertMapper {
-    public static AlertResponseDTO mapToResponseDTO(Alert alert) {
+    public AlertResponseDTO mapToResponseDTO(Alert alert) {
         AlertResponseDTO dto = new AlertResponseDTO();
         dto.setId(alert.getId());
         dto.setName(alert.getName());
@@ -22,7 +24,7 @@ public class AlertMapper {
         return dto;
     }
 
-    public static Alert mapToEntity(AlertRequestDTO dto, User user, Stock stock) {
+    public Alert mapToEntity(AlertRequestDTO dto, User user, Stock stock) {
         Alert alert = new Alert();
         alert.setName(dto.getName());
         alert.setTargetPrice(dto.getTargetPrice());
