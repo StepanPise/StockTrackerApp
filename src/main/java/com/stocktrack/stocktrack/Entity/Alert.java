@@ -18,14 +18,6 @@ public class Alert {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
-    @ManyToOne
-    @JoinColumn(name = "user_id", nullable = false)
-    private User user;
-
-    @ManyToOne
-    @JoinColumn(name = "stock_id", nullable = false)
-    private Stock stock;
-
     @Column(nullable = false, length = 100)
     private String name;
 
@@ -35,6 +27,14 @@ public class Alert {
     @Enumerated(EnumType.STRING)
     @Column(nullable = false)
     private ConditionType conditionType;
+
+    @ManyToOne
+    @JoinColumn(name = "user_id", nullable = false)
+    private User user;
+
+    @ManyToOne
+    @JoinColumn(name = "stock_id", nullable = false)
+    private Stock stock;
 
     @CreationTimestamp
     @Column(nullable = false, updatable = false)

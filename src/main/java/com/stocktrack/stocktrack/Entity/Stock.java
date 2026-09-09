@@ -18,12 +18,12 @@ public class Stock {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
-    @OneToMany(mappedBy = "stock", cascade = CascadeType.ALL, orphanRemoval = true)
-    private List<Alert> alerts = new ArrayList<>();
-
     @Column(nullable = false, length = 100)
     private String name;
 
     @Column(nullable = false, unique = true, length = 10)
     private String ticker;
+
+    @OneToMany(mappedBy = "stock", cascade = CascadeType.ALL, orphanRemoval = true)
+    private List<Alert> alerts = new ArrayList<>();
 }

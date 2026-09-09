@@ -29,13 +29,13 @@ public class AlertController {
 
     @PostMapping
     @ResponseStatus(HttpStatus.CREATED)
-    public AlertResponseDTO addAlert(@Valid @RequestBody AlertRequestDTO alert){
-        return alertService.addAlert(alert) ;
+    public AlertResponseDTO addAlert(@Valid @RequestBody AlertRequestDTO alertRequestDTO){
+        return alertService.addAlert(alertRequestDTO) ;
     }
 
     @PutMapping("/{id}")
-    public AlertResponseDTO updateAlertById(@PathVariable Long id, @Valid @RequestBody AlertRequestDTO alert){
-        return alertService.updateAlertById(id, alert);
+    public AlertResponseDTO updateAlertById(@PathVariable Long id, @Valid @RequestBody AlertRequestDTO alertRequestDTO){
+        return alertService.updateAlertById(id, alertRequestDTO);
     }
 
     @DeleteMapping("/{id}")

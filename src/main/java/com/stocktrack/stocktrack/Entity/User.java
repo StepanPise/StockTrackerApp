@@ -32,10 +32,10 @@ public class User {
 
     @Enumerated(EnumType.STRING)
     @Column(nullable = false)
-    private RoleType role = RoleType.USER; //safe default valuee
+    private RoleType role = RoleType.USER; //safe default value
 
     @OneToMany(mappedBy = "user", cascade = CascadeType.ALL, orphanRemoval = true)
-    private List<Alert> alerts = new ArrayList<>(); //safe default valuee
+    private List<Alert> alerts = new ArrayList<>();
 
     @CreationTimestamp
     @Column(nullable = false, updatable = false)

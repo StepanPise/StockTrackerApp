@@ -2,11 +2,14 @@ package com.stocktrack.stocktrack.Service;
 
 import com.stocktrack.stocktrack.DTO.FinnhubDTOs.FinnhubNameResponseDTO;
 import com.stocktrack.stocktrack.DTO.FinnhubDTOs.FinnhubPriceResponseDTO;
+import com.stocktrack.stocktrack.Exception.ResourceNotFoundException;
+import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 import org.springframework.web.client.RestTemplate;
 
 @Service
+@RequiredArgsConstructor
 public class MarketDataService {
 
     @Value("${finnhub.api.key}")
@@ -16,9 +19,7 @@ public class MarketDataService {
     @Value("${finnhub.api.profile.url}")
     private String nameApiUrl;
 
-
-    //Inject restTemplate (dont create it with "new")
-    private final RestTemplate restTemplate = new RestTemplate();
+    private final RestTemplate restTemplate;
 
     public double getCurrentPrice(String ticker) {
         String url = priceApiUrl + "?symbol=" + ticker + "&token=" + apiKey;
@@ -28,7 +29,7 @@ public class MarketDataService {
         if (response != null && response.getCurrentPrice() > 0) {
             return response.getCurrentPrice();
         } else {
-            throw new RuntimeException("Invalid ticker: " + ticker);
+            throw new ResourceNotFoundException("Invalid ticker: " + ticker);
         }
 
     }
@@ -41,7 +42,7 @@ public class MarketDataService {
         if (response != null) {
             return response.getCompanyName();
         } else {
-            throw new RuntimeException("Invalid ticker: " + ticker);
+            throw new ResourceNotFoundException("Invalid ticker: " + ticker);
         }
     }
 
