@@ -11,6 +11,7 @@ import com.stocktrack.stocktrack.Repository.AlertRepository;
 import com.stocktrack.stocktrack.Repository.StockRepository;
 import com.stocktrack.stocktrack.Repository.UserRepository;
 import lombok.RequiredArgsConstructor;
+import org.springframework.security.access.AccessDeniedException;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -28,16 +29,16 @@ public class AlertService {
     private final MarketDataService marketDataService;
     private final AlertMapper alertMapper;
 
-    // HELPER METHODS
+// ----------------- PRIVATE HELPER METHODS -----------------
 
-    private Alert getAlertEntityById(Long id) {
-        return alertRepository.findById(id)
+    private Alert getAlertEntityByIdAndValidateOwnership(Long id, User currentUser) {
+        Alert alert = alertRepository.findById(id)
                 .orElseThrow(() -> new ResourceNotFoundException("Alert with ID " + id + " does not exist."));
-    }
 
-    private User getUserEntity(Long userId) {
-        return userRepository.findById(userId)
-                .orElseThrow(() -> new ResourceNotFoundException("User with ID " + userId + " does not exist."));
+        if (!alert.getUser().getId().equals(currentUser.getId())) {
+            throw new AccessDeniedException("No authorization");
+        }
+        return alert;
     }
 
     private Stock getOrCreateStock(String ticker) {
@@ -51,51 +52,53 @@ public class AlertService {
                 });
     }
 
-    // BUISNESS LOGIC
+    // ----------------- USER METHODS -----------------
+
+    @Transactional(readOnly = true)
+    public List<AlertResponseDTO> getMyAlerts(User currentUser) {
+        return alertRepository.findByUser(currentUser).stream()
+                .map(alertMapper::mapToResponseDTO)
+                .toList();
+    }
+
+    @Transactional(readOnly = true)
+    public AlertResponseDTO getAlertById(Long id, User currentUser) {
+        Alert alert = getAlertEntityByIdAndValidateOwnership(id, currentUser);
+        return alertMapper.mapToResponseDTO(alert);
+    }
+
+    @Transactional
+    public AlertResponseDTO addAlert(AlertRequestDTO requestDto, User currentUser) {
+        Stock stock = getOrCreateStock(requestDto.getTicker());
+        Alert alertToSave = alertMapper.mapToEntity(requestDto, currentUser, stock);
+        return alertMapper.mapToResponseDTO(alertRepository.save(alertToSave));
+    }
+
+    @Transactional
+    public AlertResponseDTO updateAlertById(Long id, AlertRequestDTO requestDto, User currentUser) {
+        Alert existingAlert = getAlertEntityByIdAndValidateOwnership(id, currentUser);
+        Stock stock = getOrCreateStock(requestDto.getTicker());
+
+        existingAlert.setName(requestDto.getName());
+        existingAlert.setTargetPrice(requestDto.getTargetPrice());
+        existingAlert.setConditionType(requestDto.getConditionType());
+        existingAlert.setStock(stock);
+
+        return alertMapper.mapToResponseDTO(existingAlert);
+    }
+
+    @Transactional
+    public void deleteAlertById(Long id, User currentUser) {
+        Alert alert = getAlertEntityByIdAndValidateOwnership(id, currentUser);
+        alertRepository.delete(alert);
+    }
+
+    // ----------------- ADMIN METHODS -----------------
 
     @Transactional(readOnly = true)
     public List<AlertResponseDTO> getAllAlerts() {
         return alertRepository.findAll().stream()
                 .map(alertMapper::mapToResponseDTO)
                 .toList();
-    }
-
-    @Transactional(readOnly = true)
-    public AlertResponseDTO getAlertById(Long id) {
-        Alert alert = getAlertEntityById(id);
-        return alertMapper.mapToResponseDTO(alert);
-    }
-
-    @Transactional
-    public AlertResponseDTO addAlert(AlertRequestDTO requestDto, User user) {
-        Stock stock = getOrCreateStock(requestDto.getTicker());
-
-        Alert alertToSave = alertMapper.mapToEntity(requestDto, user, stock);
-        Alert savedAlert = alertRepository.save(alertToSave);
-
-        return alertMapper.mapToResponseDTO(savedAlert);
-    }
-
-    @Transactional
-    public AlertResponseDTO updateAlertById(Long id, AlertRequestDTO requestDto) {
-        Alert existingAlert = getAlertEntityById(id);
-
-        User user = getUserEntity(requestDto.getUserId());
-        Stock stock = getOrCreateStock(requestDto.getTicker());
-
-        existingAlert.setName(requestDto.getName());
-        existingAlert.setTargetPrice(requestDto.getTargetPrice());
-        existingAlert.setConditionType(requestDto.getConditionType());
-        existingAlert.setUser(user);
-        existingAlert.setStock(stock);
-
-        Alert savedAlert = alertRepository.save(existingAlert);
-        return alertMapper.mapToResponseDTO(savedAlert);
-    }
-
-    @Transactional
-    public void deleteAlertById(Long id) {
-        Alert alert = getAlertEntityById(id);
-        alertRepository.delete(alert);
     }
 }

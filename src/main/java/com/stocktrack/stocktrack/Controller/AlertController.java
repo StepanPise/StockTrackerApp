@@ -7,6 +7,7 @@ import com.stocktrack.stocktrack.Service.AlertService;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.web.bind.annotation.*;
 
@@ -19,30 +20,40 @@ public class AlertController {
 
     private final AlertService alertService;
 
-    @GetMapping
-    public List<AlertResponseDTO> getAllAlerts() {
-        return alertService.getAllAlerts();
+    // ----------------- USER METHODS -----------------
+
+    @GetMapping("/me")
+    public List<AlertResponseDTO> getMyAlerts(@AuthenticationPrincipal User currentUser) {
+        return alertService.getMyAlerts(currentUser);
     }
 
     @GetMapping("/{id}")
-    public AlertResponseDTO getAlertById(@PathVariable Long id){
-        return alertService.getAlertById(id);
+    public AlertResponseDTO getAlertById(@PathVariable Long id, @AuthenticationPrincipal User currentUser){
+        return alertService.getAlertById(id, currentUser);
     }
 
     @PostMapping
     @ResponseStatus(HttpStatus.CREATED)
     public AlertResponseDTO addAlert(@Valid @RequestBody AlertRequestDTO alertRequestDTO, @AuthenticationPrincipal User currentUser){
-        return alertService.addAlert(alertRequestDTO, currentUser) ;
+        return alertService.addAlert(alertRequestDTO, currentUser);
     }
 
     @PutMapping("/{id}")
-    public AlertResponseDTO updateAlertById(@PathVariable Long id, @Valid @RequestBody AlertRequestDTO alertRequestDTO){
-        return alertService.updateAlertById(id, alertRequestDTO);
+    public AlertResponseDTO updateAlertById(@PathVariable Long id, @Valid @RequestBody AlertRequestDTO alertRequestDTO, @AuthenticationPrincipal User currentUser){
+        return alertService.updateAlertById(id, alertRequestDTO, currentUser);
     }
 
     @DeleteMapping("/{id}")
     @ResponseStatus(HttpStatus.NO_CONTENT)
-    public void deleteAlertById(@PathVariable Long id){
-        alertService.deleteAlertById(id);
+    public void deleteAlertById(@PathVariable Long id, @AuthenticationPrincipal User currentUser){
+        alertService.deleteAlertById(id, currentUser);
+    }
+
+    // ----------------- ADMIN METHODS -----------------
+
+    @GetMapping
+    @PreAuthorize("hasRole('ADMIN')")
+    public List<AlertResponseDTO> getAllAlerts() {
+        return alertService.getAllAlerts();
     }
 }

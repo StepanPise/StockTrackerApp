@@ -20,10 +20,22 @@ public class StockService {
     private final StockRepository stockRepository;
     private final StockMapper stockMapper;
 
+    // ----------------- PRIVATE HELPER METHODS -----------------
+
     private Stock getStockEntityById(Long id) {
         return stockRepository.findById(id)
                 .orElseThrow(() -> new ResourceNotFoundException("Stock with ID " + id + " does not exist."));
     }
+
+    private void validateTickerUniqueness(String newTicker, String currentTicker) {
+        if (newTicker.equalsIgnoreCase(currentTicker)) {
+            return;
+        }
+        if (stockRepository.findByTicker(newTicker).isPresent()) {
+            throw new IllegalArgumentException("Stock with ticker '" + newTicker + "' already exists.");
+        }
+    }
+    // ----------------- USER METHODS -----------------
 
     @Transactional(readOnly = true)
     public List<StockResponseDTO> getAllStocks() {
@@ -36,9 +48,14 @@ public class StockService {
         return stockMapper.mapToResponseDTO(getStockEntityById(id));
     }
 
+
+    // ----------------- ADMIN METHODS -----------------
     @Transactional
     public StockResponseDTO addStock(StockRequestDTO stockRequestDTO) {
         Stock stock = stockMapper.mapToEntity(stockRequestDTO);
+
+        validateTickerUniqueness(stockRequestDTO.getTicker(), null);
+
         return stockMapper.mapToResponseDTO(stockRepository.save(stock));
     }
 
@@ -52,10 +69,12 @@ public class StockService {
     public StockResponseDTO updateStockById(Long id, StockRequestDTO stockRequestDTO) {
         Stock existingStock = getStockEntityById(id);
 
+        validateTickerUniqueness(stockRequestDTO.getTicker(), existingStock.getTicker());
+
         existingStock.setName(stockRequestDTO.getName());
         existingStock.setTicker(stockRequestDTO.getTicker());
 
-        return stockMapper.mapToResponseDTO(stockRepository.save(existingStock));
+        return stockMapper.mapToResponseDTO(existingStock);
     }
 
 }
