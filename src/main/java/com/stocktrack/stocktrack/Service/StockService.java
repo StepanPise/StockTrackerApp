@@ -29,7 +29,7 @@ public class StockService {
     public List<StockResponseDTO> getAllStocks() {
         return stockRepository.findAll().stream()
                 .map(stockMapper::mapToResponseDTO)
-                .collect(Collectors.toList());    }
+                .toList() ;  }
 
     @Transactional(readOnly = true)
     public StockResponseDTO getStockById(Long id) {

@@ -7,6 +7,7 @@ import com.stocktrack.stocktrack.Mapper.UserMapper;
 import com.stocktrack.stocktrack.Entity.User;
 import com.stocktrack.stocktrack.Repository.UserRepository;
 import lombok.RequiredArgsConstructor;
+import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -19,18 +20,50 @@ public class UserService {
 
     private final UserRepository userRepository;
     private final UserMapper userMapper;
+    private final PasswordEncoder passwordEncoder;
 
-    //With this private method I can throw exceptions only in one place
+
+    // ----------------- PRIVATE HELPER METHODS -----------------
+
     private User getUserEntityById(Long id) {
         return userRepository.findById(id)
                 .orElseThrow(() -> new ResourceNotFoundException("User with ID " + id + " does not exist."));
     }
 
+    private void validateEmailUniqueness(String newEmail, String currentEmail) {
+        if (newEmail.equalsIgnoreCase(currentEmail)) {
+            return;
+        }
+        if (userRepository.findByEmail(newEmail).isPresent()) {
+            throw new IllegalArgumentException("Email '" + newEmail + "' is already taken.");
+        }
+    }
+
+
+    // ----------------- USER METHODS -----------------
+    public UserResponseDTO getCurrentUserProfile(User currentUser) {
+        return userMapper.mapToResponseDTO(currentUser);
+    }
+
+    @Transactional
+    public UserResponseDTO updateCurrentUserProfile(User currentUser, UserRequestDTO requestDTO) {
+        User user = getUserEntityById(currentUser.getId());
+
+        validateEmailUniqueness(requestDTO.getEmail(), user.getEmail());
+
+        user.setEmail(requestDTO.getEmail());
+        user.setPasswordHash(passwordEncoder.encode(requestDTO.getPassword()));
+        return userMapper.mapToResponseDTO(user); // Hibernates DIRTY CHECKING
+    }
+
+
+    // ----------------- ADMIN METHODS -----------------
+
     @Transactional(readOnly = true) //optimalization
     public List<UserResponseDTO> getAllUsers() {
         return userRepository.findAll().stream()
                 .map(userMapper::mapToResponseDTO)
-                .collect(Collectors.toList());
+                .toList();
     }
 
     @Transactional(readOnly = true)
@@ -38,20 +71,16 @@ public class UserService {
         return userMapper.mapToResponseDTO(getUserEntityById(id));
     }
 
-//    @Transactional
-//    public UserResponseDTO addUser(UserRequestDTO userRequestDTO) {
-//        User user = userMapper.mapToEntity(userRequestDTO);
-//        return userMapper.mapToResponseDTO(userRepository.save(user));
-//    }
-
     @Transactional
     public UserResponseDTO updateUserById(Long id, UserRequestDTO requestDTO) {
         User existingUser = getUserEntityById(id);
 
-        existingUser.setEmail(requestDTO.getEmail());
-        existingUser.setPasswordHash(requestDTO.getPassword());// passwd to hash?
+        validateEmailUniqueness(requestDTO.getEmail(), existingUser.getEmail());
 
-        return userMapper.mapToResponseDTO(userRepository.save(existingUser));
+        existingUser.setEmail(requestDTO.getEmail());
+        existingUser.setPasswordHash(passwordEncoder.encode(requestDTO.getPassword()));
+
+        return userMapper.mapToResponseDTO(existingUser);
     }
 
     @Transactional

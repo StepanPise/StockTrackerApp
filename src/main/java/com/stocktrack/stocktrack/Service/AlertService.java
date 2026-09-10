@@ -57,7 +57,7 @@ public class AlertService {
     public List<AlertResponseDTO> getAllAlerts() {
         return alertRepository.findAll().stream()
                 .map(alertMapper::mapToResponseDTO)
-                .collect(Collectors.toList());
+                .toList();
     }
 
     @Transactional(readOnly = true)
