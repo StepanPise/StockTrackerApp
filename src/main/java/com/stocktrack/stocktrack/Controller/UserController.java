@@ -28,11 +28,11 @@ public class UserController {
         return userService.getUserById(id);
     }
 
-    @PostMapping
-    @ResponseStatus(HttpStatus.CREATED)
-    public UserResponseDTO addUser(@Valid @RequestBody UserRequestDTO userRequestDTO){
-        return userService.addUser(userRequestDTO);
-    }
+//    @PostMapping
+//    @ResponseStatus(HttpStatus.CREATED)
+//    public UserResponseDTO addUser(@Valid @RequestBody UserRequestDTO userRequestDTO){
+//        return userService.addUser(userRequestDTO);
+//    }
 
     @PutMapping("/{id}")
     public UserResponseDTO updateUserById(@PathVariable Long id, @Valid @RequestBody UserRequestDTO userRequestDTO){

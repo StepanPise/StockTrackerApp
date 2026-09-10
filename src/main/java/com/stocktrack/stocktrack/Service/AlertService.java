@@ -67,8 +67,7 @@ public class AlertService {
     }
 
     @Transactional
-    public AlertResponseDTO addAlert(AlertRequestDTO requestDto) {
-        User user = getUserEntity(requestDto.getUserId());
+    public AlertResponseDTO addAlert(AlertRequestDTO requestDto, User user) {
         Stock stock = getOrCreateStock(requestDto.getTicker());
 
         Alert alertToSave = alertMapper.mapToEntity(requestDto, user, stock);

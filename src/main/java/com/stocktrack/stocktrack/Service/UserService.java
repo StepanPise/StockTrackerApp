@@ -38,11 +38,11 @@ public class UserService {
         return userMapper.mapToResponseDTO(getUserEntityById(id));
     }
 
-    @Transactional
-    public UserResponseDTO addUser(UserRequestDTO userRequestDTO) {
-        User user = userMapper.mapToEntity(userRequestDTO);
-        return userMapper.mapToResponseDTO(userRepository.save(user));
-    }
+//    @Transactional
+//    public UserResponseDTO addUser(UserRequestDTO userRequestDTO) {
+//        User user = userMapper.mapToEntity(userRequestDTO);
+//        return userMapper.mapToResponseDTO(userRepository.save(user));
+//    }
 
     @Transactional
     public UserResponseDTO updateUserById(Long id, UserRequestDTO requestDTO) {

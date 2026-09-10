@@ -2,10 +2,12 @@ package com.stocktrack.stocktrack.Controller;
 
 import com.stocktrack.stocktrack.DTO.Request.AlertRequestDTO;
 import com.stocktrack.stocktrack.DTO.Response.AlertResponseDTO;
+import com.stocktrack.stocktrack.Entity.User;
 import com.stocktrack.stocktrack.Service.AlertService;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
+import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
@@ -29,8 +31,8 @@ public class AlertController {
 
     @PostMapping
     @ResponseStatus(HttpStatus.CREATED)
-    public AlertResponseDTO addAlert(@Valid @RequestBody AlertRequestDTO alertRequestDTO){
-        return alertService.addAlert(alertRequestDTO) ;
+    public AlertResponseDTO addAlert(@Valid @RequestBody AlertRequestDTO alertRequestDTO, @AuthenticationPrincipal User currentUser){
+        return alertService.addAlert(alertRequestDTO, currentUser) ;
     }
 
     @PutMapping("/{id}")

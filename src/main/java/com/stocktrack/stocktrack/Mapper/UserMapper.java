@@ -14,11 +14,4 @@ public class UserMapper {
         dto.setRole(user.getRole());
         return dto;
     }
-
-    public User mapToEntity(UserRequestDTO dto) {
-        User user = new User();
-        user.setEmail(dto.getEmail());
-        user.setPasswordHash(dto.getPassword());//hash later
-        return user;
-    }
 }

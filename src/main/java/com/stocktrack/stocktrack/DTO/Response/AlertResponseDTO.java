@@ -18,7 +18,8 @@ public class AlertResponseDTO {
     private ConditionType conditionType;
     private LocalDateTime createdAt;
 
-    private Long userId;
+//  IDOR (Insecure Direct Object References)
+//  private Long userId;
     private String userEmail;
     private String stockTicker;
 }

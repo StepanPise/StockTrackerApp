@@ -17,7 +17,6 @@ public class AlertMapper {
         dto.setConditionType(alert.getConditionType());
         dto.setCreatedAt(alert.getCreatedAt());
 
-        dto.setUserId(alert.getUser().getId());
         dto.setUserEmail(alert.getUser().getEmail());
         dto.setStockTicker(alert.getStock().getTicker());
 
