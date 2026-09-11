@@ -1,0 +1,132 @@
+<!DOCTYPE html>
+<html lang="cs">
+<head>
+    <meta charset="UTF-8">
+    <title>StockTrack - Frontend Demo</title>
+    <style>
+        body { font-family: Arial, sans-serif; padding: 20px; max-width: 600px; margin: auto; }
+        .box { border: 1px solid #ccc; padding: 15px; margin-bottom: 20px; border-radius: 5px; }
+        input { display: block; margin-bottom: 10px; padding: 8px; width: 95%; }
+        button { padding: 10px 15px; margin-right: 5px; cursor: pointer; border: none; border-radius: 3px; }
+        .btn-blue { background: #007bff; color: white; }
+        .btn-green { background: #28a745; color: white; }
+        .btn-red { background: #dc3545; color: white; }
+        pre { background: #f4f4f4; padding: 10px; border-radius: 3px; overflow-x: auto; white-space: pre-wrap; }
+    </style>
+</head>
+<body>
+
+<h1>StockTrack Demo</h1>
+
+<!-- REGISTRAČNÍ A PŘIHLAŠOVACÍ FORMULÁŘ -->
+<div class="box">
+    <h2>Auth zóna</h2>
+    <input type="email" id="authEmail" placeholder="Email (např. novy@test.cz)">
+    <input type="password" id="authPassword" placeholder="Heslo">
+
+    <button class="btn-green" onclick="register()">Registrovat se</button>
+    <button class="btn-blue" onclick="login()">Přihlásit se</button>
+</div>
+
+<!-- TEST ZABEZPEČENÉHO ENDPOINTU -->
+<div class="box">
+    <h2>Zabezpečená data</h2>
+    <p>Kliknutím na tlačítko pošleš do API svůj token a zjistíš svůj profil.</p>
+    <button class="btn-blue" onclick="getMyProfile()">Získat můj profil (/api/users/me)</button>
+    <button class="btn-red" onclick="logout()">Odhlásit se</button>
+
+    <h3>Odpověď ze serveru:</h3>
+    <pre id="output">Zatím žádná data...</pre>
+</div>
+
+<script>
+    const API_URL = '/api';
+
+    // 1. Funkce pro REGISTRACI
+    async function register() {
+        const email = document.getElementById('authEmail').value;
+        const password = document.getElementById('authPassword').value;
+
+        try {
+            const response = await fetch(`${API_URL}/auth/register`, {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({ email: email, password: password })
+            });
+
+            const data = await response.json();
+
+            if (response.ok) {
+                // Po úspěšné registraci server vrací token úplně stejně jako u loginu
+                localStorage.setItem('jwt_token', data.token);
+                document.getElementById('output').innerText = "Registrace úspěšná! Token byl uložen, jsi přihlášen.";
+            } else {
+                document.getElementById('output').innerText = "Chyba registrace: " + JSON.stringify(data);
+            }
+        } catch (error) {
+            document.getElementById('output').innerText = "Chyba spojení se serverem.";
+        }
+    }
+
+    // 2. Funkce pro PŘIHLÁŠENÍ
+    async function login() {
+        const email = document.getElementById('authEmail').value;
+        const password = document.getElementById('authPassword').value;
+
+        try {
+            const response = await fetch(`${API_URL}/auth/login`, {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({ email: email, password: password })
+            });
+
+            const data = await response.json();
+
+            if (response.ok) {
+                localStorage.setItem('jwt_token', data.token);
+                document.getElementById('output').innerText = "Přihlášení úspěšné! Token byl uložen.";
+            } else {
+                document.getElementById('output').innerText = "Chyba přihlášení: " + JSON.stringify(data);
+            }
+        } catch (error) {
+            document.getElementById('output').innerText = "Chyba spojení se serverem.";
+        }
+    }
+
+    // 3. Funkce pro ZÍSKÁNÍ ZABEZPEČENÝCH DAT
+    async function getMyProfile() {
+        const token = localStorage.getItem('jwt_token');
+
+        if (!token) {
+            document.getElementById('output').innerText = "Nejsi přihlášen (nemáš token).";
+            return;
+        }
+
+        try {
+            const response = await fetch(`${API_URL}/users/me`, {
+                method: 'GET',
+                headers: {
+                    'Authorization': `Bearer ${token}`
+                }
+            });
+
+            const data = await response.json();
+
+            if (response.ok) {
+                document.getElementById('output').innerText = JSON.stringify(data, null, 2);
+            } else {
+                document.getElementById('output').innerText = "Chyba autorizace: " + response.status;
+            }
+        } catch (error) {
+            document.getElementById('output').innerText = "Chyba spojení.";
+        }
+    }
+
+    // 4. Funkce pro ODHLÁŠENÍ
+    function logout() {
+        localStorage.removeItem('jwt_token');
+        document.getElementById('output').innerText = "Byl jsi odhlášen (token smazán z prohlížeče).";
+    }
+</script>
+</body>
+</html>

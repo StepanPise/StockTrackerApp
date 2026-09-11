@@ -1,0 +1,28 @@
+version: '3.8'
+
+services:
+  postgres-db:
+    image: postgres:15
+    container_name: stocktrack-db
+    environment:
+      POSTGRES_USER: root
+      POSTGRES_PASSWORD: rootpassword
+      POSTGRES_DB: stocktrack
+    ports:
+      - "5433:5432"
+
+  backend:
+    build:
+      context: .
+    container_name: stocktrack-api
+    ports:
+      - "8080:8080"
+    environment:
+      - SPRING_DATASOURCE_URL=jdbc:postgresql://postgres-db:5432/stocktrack
+      - SPRING_DATASOURCE_USERNAME=root
+      - SPRING_DATASOURCE_PASSWORD=rootpassword
+      - SPRING_JPA_HIBERNATE_DDL_AUTO=update
+      - JWT_SECRET_KEY=${JWT_SECRET_KEY}
+      - FINNHUB_API_KEY=${FINNHUB_API_KEY}
+    depends_on:
+      - postgres-db
