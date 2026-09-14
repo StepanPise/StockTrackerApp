@@ -4,6 +4,7 @@ import com.stocktrack.stocktrack.Entity.Alert;
 import com.stocktrack.stocktrack.Entity.Enum.ConditionType;
 import com.stocktrack.stocktrack.Entity.Stock;
 import com.stocktrack.stocktrack.Repository.AlertRepository;
+import com.stocktrack.stocktrack.Repository.StockRepository;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.scheduling.annotation.Scheduled;
@@ -22,6 +23,7 @@ public class AlertEvaluationService {
 
     private final AlertRepository alertRepository;
     private final MarketDataService marketDataService;
+    private final NotificationService notificationService;
 
     // 60 000 ms (1 minute)
     @Scheduled(fixedDelay = 60000)
@@ -49,8 +51,7 @@ public class AlertEvaluationService {
             if(isConditionMet(alert, currentPrice)){
 
                 alert.setActive(false);
-                triggerWebhook(alert, currentPrice);
-            }
+                notificationService.sendAlertNotification(alert, currentPrice);            }
 
         }
     }
@@ -64,7 +65,4 @@ public class AlertEvaluationService {
         return false;
     }
 
-    private void triggerWebhook(Alert alert, double currentPrice) {
-        log.warn("Alert ID {} triggered. Ticker: {}, Current price: {}.", alert.getId(), alert.getStock().getTicker(), currentPrice);
-    }
 }

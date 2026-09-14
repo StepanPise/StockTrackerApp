@@ -28,6 +28,9 @@ public class Alert {
     @Column(nullable = false)
     private ConditionType conditionType;
 
+    @Column(nullable = false)
+    private boolean isActive = true;
+
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "user_id", nullable = false)
     private User user;
@@ -40,6 +43,5 @@ public class Alert {
     @Column(nullable = false, updatable = false)
     private LocalDateTime createdAt;
 
-    @Column(nullable = false)
-    private boolean isActive = true;
+
 }

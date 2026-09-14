@@ -22,4 +22,5 @@ public class AlertResponseDTO {
 //  private Long userId;
     private String userEmail;
     private String stockTicker;
+    private boolean isActive;
 }
