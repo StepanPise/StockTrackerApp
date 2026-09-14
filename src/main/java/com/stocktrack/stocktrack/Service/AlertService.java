@@ -79,7 +79,6 @@ public class AlertService {
         Alert existingAlert = getAlertEntityByIdAndValidateOwnership(id, currentUser);
         Stock stock = getOrCreateStock(requestDto.getTicker());
 
-        existingAlert.setName(requestDto.getName());
         existingAlert.setTargetPrice(requestDto.getTargetPrice());
         existingAlert.setConditionType(requestDto.getConditionType());
         existingAlert.setStock(stock);

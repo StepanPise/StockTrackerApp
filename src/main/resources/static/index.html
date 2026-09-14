@@ -1,132 +1,91 @@
 <!DOCTYPE html>
-<html lang="cs">
+<html lang="en">
 <head>
     <meta charset="UTF-8">
-    <title>StockTrack - Frontend Demo</title>
-    <style>
-        body { font-family: Arial, sans-serif; padding: 20px; max-width: 600px; margin: auto; }
-        .box { border: 1px solid #ccc; padding: 15px; margin-bottom: 20px; border-radius: 5px; }
-        input { display: block; margin-bottom: 10px; padding: 8px; width: 95%; }
-        button { padding: 10px 15px; margin-right: 5px; cursor: pointer; border: none; border-radius: 3px; }
-        .btn-blue { background: #007bff; color: white; }
-        .btn-green { background: #28a745; color: white; }
-        .btn-red { background: #dc3545; color: white; }
-        pre { background: #f4f4f4; padding: 10px; border-radius: 3px; overflow-x: auto; white-space: pre-wrap; }
-    </style>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>StockTrack Dashboard</title>
+    <link rel="stylesheet" href="css/style.css">
 </head>
 <body>
 
-<h1>StockTrack Demo</h1>
+<!-- AUTH SECTION -->
+<div id="auth-section" class="container">
+    <h1>StockTrack</h1>
+    <div class="box">
+        <h2>Sign In / Register</h2>
+        <input type="email" id="authEmail" placeholder="Email (e.g. user@test.com)">
+        <input type="password" id="authPassword" placeholder="Password">
 
-<!-- REGISTRAČNÍ A PŘIHLAŠOVACÍ FORMULÁŘ -->
-<div class="box">
-    <h2>Auth zóna</h2>
-    <input type="email" id="authEmail" placeholder="Email (např. novy@test.cz)">
-    <input type="password" id="authPassword" placeholder="Heslo">
-
-    <button class="btn-green" onclick="register()">Registrovat se</button>
-    <button class="btn-blue" onclick="login()">Přihlásit se</button>
+        <div class="btn-group">
+            <button class="btn btn-blue" onclick="login()">Sign In</button>
+            <button class="btn btn-green" onclick="register()">Register</button>
+        </div>
+        <p id="auth-msg" class="msg"></p>
+    </div>
 </div>
 
-<!-- TEST ZABEZPEČENÉHO ENDPOINTU -->
-<div class="box">
-    <h2>Zabezpečená data</h2>
-    <p>Kliknutím na tlačítko pošleš do API svůj token a zjistíš svůj profil.</p>
-    <button class="btn-blue" onclick="getMyProfile()">Získat můj profil (/api/users/me)</button>
-    <button class="btn-red" onclick="logout()">Odhlásit se</button>
+<!-- DASHBOARD SECTION (hidden without token) -->
+<div id="dashboard-section" class="container hidden">
+    <header>
+        <h1>My Alerts</h1>
+        <button class="btn btn-red" onclick="logout()">Sign Out</button>
+    </header>
 
-    <h3>Odpověď ze serveru:</h3>
-    <pre id="output">Zatím žádná data...</pre>
+    <div class="grid">
+        <!-- LEFT COLUMN: FORMS -->
+        <div class="sidebar">
+            <!-- CREATE ALERT -->
+            <div class="box">
+                <h2>New Alert</h2>
+
+                <input list="stockList" id="alertTicker" placeholder="Ticker (e.g. RKLB, AAPL)" autocomplete="off">
+                <datalist id="stockList">
+                    <!-- Populated dynamically via fetchStocks() -->
+                </datalist>
+
+                <input type="number" id="alertPrice" step="any" placeholder="Target Price (USD)">
+                <select id="alertCondition">
+                    <option value="ABOVE">Price rises above (ABOVE)</option>
+                    <option value="BELOW">Price drops below (BELOW)</option>
+                </select>
+                <button class="btn btn-green w-100" onclick="createAlert()">Create Alert</button>
+                <p id="alert-msg" class="msg"></p>
+            </div>
+
+            <!-- NOTIFICATION SETTINGS -->
+            <div class="box">
+                <h2>Notifications</h2>
+                <p style="font-size: 0.9em; color: #666; margin-bottom: 15px;">
+                    Choose where to receive price trigger notifications.
+                </p>
+                <select id="notifType" onchange="toggleNotificationFields()">
+                    <option value="WEBHOOK">Discord Webhook</option>
+                    <option value="EMAIL">Email</option>
+                </select>
+
+                <div id="webhookFieldContainer">
+                    <input type="text" id="notifWebhook" placeholder="Discord Webhook URL (https://discord.com/...)">
+                </div>
+
+                <div id="emailFieldContainer" class="hidden">
+                    <input type="email" id="notifEmail" placeholder="Email address">
+                </div>
+
+                <button class="btn btn-blue w-100" onclick="saveNotificationSettings()">Save Settings</button>
+                <p id="notif-msg" class="msg"></p>
+            </div>
+        </div>
+
+        <!-- RIGHT COLUMN: ALERTS LIST -->
+        <div class="box">
+            <h2>Active Alerts</h2>
+            <div id="alerts-list">
+                <p>Loading data...</p>
+            </div>
+        </div>
+    </div>
 </div>
 
-<script>
-    const API_URL = '/api';
-
-    // 1. Funkce pro REGISTRACI
-    async function register() {
-        const email = document.getElementById('authEmail').value;
-        const password = document.getElementById('authPassword').value;
-
-        try {
-            const response = await fetch(`${API_URL}/auth/register`, {
-                method: 'POST',
-                headers: { 'Content-Type': 'application/json' },
-                body: JSON.stringify({ email: email, password: password })
-            });
-
-            const data = await response.json();
-
-            if (response.ok) {
-                // Po úspěšné registraci server vrací token úplně stejně jako u loginu
-                localStorage.setItem('jwt_token', data.token);
-                document.getElementById('output').innerText = "Registrace úspěšná! Token byl uložen, jsi přihlášen.";
-            } else {
-                document.getElementById('output').innerText = "Chyba registrace: " + JSON.stringify(data);
-            }
-        } catch (error) {
-            document.getElementById('output').innerText = "Chyba spojení se serverem.";
-        }
-    }
-
-    // 2. Funkce pro PŘIHLÁŠENÍ
-    async function login() {
-        const email = document.getElementById('authEmail').value;
-        const password = document.getElementById('authPassword').value;
-
-        try {
-            const response = await fetch(`${API_URL}/auth/login`, {
-                method: 'POST',
-                headers: { 'Content-Type': 'application/json' },
-                body: JSON.stringify({ email: email, password: password })
-            });
-
-            const data = await response.json();
-
-            if (response.ok) {
-                localStorage.setItem('jwt_token', data.token);
-                document.getElementById('output').innerText = "Přihlášení úspěšné! Token byl uložen.";
-            } else {
-                document.getElementById('output').innerText = "Chyba přihlášení: " + JSON.stringify(data);
-            }
-        } catch (error) {
-            document.getElementById('output').innerText = "Chyba spojení se serverem.";
-        }
-    }
-
-    // 3. Funkce pro ZÍSKÁNÍ ZABEZPEČENÝCH DAT
-    async function getMyProfile() {
-        const token = localStorage.getItem('jwt_token');
-
-        if (!token) {
-            document.getElementById('output').innerText = "Nejsi přihlášen (nemáš token).";
-            return;
-        }
-
-        try {
-            const response = await fetch(`${API_URL}/users/me`, {
-                method: 'GET',
-                headers: {
-                    'Authorization': `Bearer ${token}`
-                }
-            });
-
-            const data = await response.json();
-
-            if (response.ok) {
-                document.getElementById('output').innerText = JSON.stringify(data, null, 2);
-            } else {
-                document.getElementById('output').innerText = "Chyba autorizace: " + response.status;
-            }
-        } catch (error) {
-            document.getElementById('output').innerText = "Chyba spojení.";
-        }
-    }
-
-    // 4. Funkce pro ODHLÁŠENÍ
-    function logout() {
-        localStorage.removeItem('jwt_token');
-        document.getElementById('output').innerText = "Byl jsi odhlášen (token smazán z prohlížeče).";
-    }
-</script>
+<script src="js/app.js"></script>
 </body>
 </html>
