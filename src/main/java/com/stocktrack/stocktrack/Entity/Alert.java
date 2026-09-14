@@ -40,4 +40,6 @@ public class Alert {
     @Column(nullable = false, updatable = false)
     private LocalDateTime createdAt;
 
+    @Column(nullable = false)
+    private boolean isActive = true;
 }

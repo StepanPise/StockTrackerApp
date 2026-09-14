@@ -24,9 +24,6 @@ public class AlertRequestDTO {
     @NotNull(message = "Condition type is required")
     private ConditionType conditionType;
 
-    @NotNull(message = "User ID is required")
-    private Long userId;
-
     @NotBlank(message = "Stock ticker is required")
     private String ticker;
 }

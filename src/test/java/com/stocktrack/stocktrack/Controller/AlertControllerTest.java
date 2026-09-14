@@ -76,7 +76,6 @@ public class AlertControllerTest {
         requestDto.setName("My Apple Alert");
         requestDto.setTargetPrice(150.0);
         requestDto.setConditionType(ConditionType.ABOVE);
-        requestDto.setUserId(1L);
 
         AlertResponseDTO responseDto = new AlertResponseDTO();
         responseDto.setId(1L);

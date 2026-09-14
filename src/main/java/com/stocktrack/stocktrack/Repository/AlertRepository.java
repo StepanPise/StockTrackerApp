@@ -11,4 +11,6 @@ import java.util.List;
 public interface AlertRepository extends JpaRepository<Alert, Long> {
 
     List<Alert> findByUser(User currentUser);
+
+    List<Alert> findByIsActiveTrue();
 }
