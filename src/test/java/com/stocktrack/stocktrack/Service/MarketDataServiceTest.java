@@ -1,6 +1,6 @@
 package com.stocktrack.stocktrack.Service;
 
-import com.stocktrack.stocktrack.DTO.FinnhubDTOs.FinnhubNameResponseDTO;
+import com.stocktrack.stocktrack.DTO.FinnhubDTOs.FinnhubCompanyProfileResponseDTO;
 import com.stocktrack.stocktrack.DTO.FinnhubDTOs.FinnhubPriceResponseDTO;
 import com.stocktrack.stocktrack.Exception.ResourceNotFoundException;
 import org.junit.jupiter.api.BeforeEach;
@@ -32,7 +32,7 @@ public class MarketDataServiceTest {
     void setUp() {
         ReflectionTestUtils.setField(marketDataService, "apiKey", "test-token");
         ReflectionTestUtils.setField(marketDataService, "priceApiUrl", "https://api.example.com/price");
-        ReflectionTestUtils.setField(marketDataService, "nameApiUrl", "https://api.example.com/name");
+        ReflectionTestUtils.setField(marketDataService, "profileApiUrl", "https://api.example.com/name");
     }
 
     @Test
@@ -44,17 +44,17 @@ public class MarketDataServiceTest {
         FinnhubPriceResponseDTO mockResponse = new FinnhubPriceResponseDTO();
         mockResponse.setCurrentPrice(150.50);
 
-        when(restTemplate.getForObject(expectedUrl, FinnhubPriceResponseDTO.class))
-                .thenReturn(mockResponse);
+        when(restTemplate.getForObject(expectedUrl, FinnhubPriceResponseDTO.class)).thenReturn(mockResponse);
 
         double actualPrice = marketDataService.getCurrentPrice(ticker);
 
         assertEquals(150.50, actualPrice);
+
         verify(restTemplate, times(1)).getForObject(expectedUrl, FinnhubPriceResponseDTO.class);
     }
 
     @Test
-    @DisplayName("getCurrentPrice: Should throw exception when price is zero or null")
+    @DisplayName("getCurrentPrice: Should throw exception when price is zero")
     void getCurrentPrice_InvalidTickerOrZeroPrice_ThrowsException() {
         String ticker = "INVALID";
         String expectedUrl = "https://api.example.com/price?symbol=INVALID&token=test-token";
@@ -62,41 +62,45 @@ public class MarketDataServiceTest {
         FinnhubPriceResponseDTO mockResponse = new FinnhubPriceResponseDTO();
         mockResponse.setCurrentPrice(0.0);
 
-        when(restTemplate.getForObject(expectedUrl, FinnhubPriceResponseDTO.class))
-                .thenReturn(mockResponse);
+        when(restTemplate.getForObject(expectedUrl, FinnhubPriceResponseDTO.class)).thenReturn(mockResponse);
 
-        assertThrows(ResourceNotFoundException.class,
-                () -> marketDataService.getCurrentPrice(ticker));
+        assertThrows(
+                ResourceNotFoundException.class,
+                () -> marketDataService.getCurrentPrice(ticker)
+        );
     }
 
     @Test
-    @DisplayName("getStockName: Should return company name when API responds correctly")
-    void getStockName_ValidTicker_ReturnsName() {
+    @DisplayName("getCompanyProfile: Should return company profile when API responds correctly")
+    void getCompanyProfile_ValidTicker_ReturnsProfile() {
         String ticker = "MSFT";
         String expectedUrl = "https://api.example.com/name?symbol=MSFT&token=test-token";
 
-        FinnhubNameResponseDTO mockResponse = new FinnhubNameResponseDTO();
+        FinnhubCompanyProfileResponseDTO mockResponse = new FinnhubCompanyProfileResponseDTO();
         mockResponse.setCompanyName("Microsoft Corporation");
+        mockResponse.setLogo("https://example.com/microsoft.png");
 
-        when(restTemplate.getForObject(expectedUrl, FinnhubNameResponseDTO.class))
-                .thenReturn(mockResponse);
+        when(restTemplate.getForObject(expectedUrl, FinnhubCompanyProfileResponseDTO.class)).thenReturn(mockResponse);
 
-        String actualName = marketDataService.getStockName(ticker);
+        FinnhubCompanyProfileResponseDTO actualProfile = marketDataService.getCompanyProfile(ticker);
 
-        assertEquals("Microsoft Corporation", actualName);
-        verify(restTemplate, times(1)).getForObject(expectedUrl, FinnhubNameResponseDTO.class);
+        assertEquals("Microsoft Corporation", actualProfile.getCompanyName());
+        assertEquals("https://example.com/microsoft.png", actualProfile.getLogo());
+
+        verify(restTemplate, times(1)).getForObject(expectedUrl, FinnhubCompanyProfileResponseDTO.class);
     }
 
     @Test
-    @DisplayName("getStockName: Should throw exception when API returns null")
-    void getStockName_InvalidTicker_ThrowsException() {
+    @DisplayName("getCompanyProfile: Should throw exception when API returns null")
+    void getCompanyProfile_InvalidTicker_ThrowsException() {
         String ticker = "INVALID";
         String expectedUrl = "https://api.example.com/name?symbol=INVALID&token=test-token";
 
-        when(restTemplate.getForObject(expectedUrl, FinnhubNameResponseDTO.class))
-                .thenReturn(null);
+        when(restTemplate.getForObject(expectedUrl, FinnhubCompanyProfileResponseDTO.class)).thenReturn(null);
 
-        assertThrows(ResourceNotFoundException.class,
-                () -> marketDataService.getStockName(ticker));
+        assertThrows(
+                ResourceNotFoundException.class,
+                () -> marketDataService.getCompanyProfile(ticker)
+        );
     }
 }

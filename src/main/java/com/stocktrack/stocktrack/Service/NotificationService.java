@@ -19,22 +19,26 @@ public class NotificationService {
     private final NotificationSettingsRepository notificationSettingsRepository;
     private final RestTemplate restTemplate;
 
-    public void sendAlertNotification(Alert alert, double currentPrice) {
+    public boolean sendAlertNotification(Alert alert, double currentPrice) {
 
         NotificationSettings settings = notificationSettingsRepository
                 .findByUser(alert.getUser())
                 .orElse(null);
 
         if (settings == null) {
-            return;
+            return false;
         }
 
         if (settings.getType() == NotificationType.EMAIL) {
             sendEmail(settings, alert, currentPrice);
+            return true;
 
         } else if (settings.getType() == NotificationType.WEBHOOK) {
             sendWebhook(settings, alert, currentPrice);
+            return true;
         }
+
+        return false;
     }
 
     private void sendEmail(
@@ -51,9 +55,12 @@ public class NotificationService {
             double currentPrice) {
 
         String message = String.format(
-                "🚨 Alert triggered! %s is now %.2f. Target price: %.2f",
+                "**%s** alert triggered!\n" +
+                        "Current price: %.2f\n" +
+                        "Condition: %s %.2f",
                 alert.getStock().getTicker(),
                 currentPrice,
+                alert.getConditionType(),
                 alert.getTargetPrice()
         );
 

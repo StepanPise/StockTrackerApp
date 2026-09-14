@@ -48,11 +48,15 @@ public class AlertEvaluationService {
         for(Alert alert : activeAlerts){
             double currentPrice = currentPrices.get(alert.getStock());
 
-            if(isConditionMet(alert, currentPrice)){
+            if (isConditionMet(alert, currentPrice)) {
 
-                alert.setActive(false);
-                notificationService.sendAlertNotification(alert, currentPrice);            }
+                boolean notificationSent =
+                        notificationService.sendAlertNotification(alert, currentPrice);
 
+                if (notificationSent) {
+                    alert.setActive(false);
+                }
+            }
         }
     }
 

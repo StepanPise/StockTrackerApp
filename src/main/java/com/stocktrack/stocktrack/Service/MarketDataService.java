@@ -1,6 +1,6 @@
 package com.stocktrack.stocktrack.Service;
 
-import com.stocktrack.stocktrack.DTO.FinnhubDTOs.FinnhubNameResponseDTO;
+import com.stocktrack.stocktrack.DTO.FinnhubDTOs.FinnhubCompanyProfileResponseDTO;
 import com.stocktrack.stocktrack.DTO.FinnhubDTOs.FinnhubPriceResponseDTO;
 import com.stocktrack.stocktrack.Exception.ResourceNotFoundException;
 import lombok.RequiredArgsConstructor;
@@ -17,7 +17,7 @@ public class MarketDataService {
     @Value("${finnhub.api.url}")
     private String priceApiUrl;
     @Value("${finnhub.api.profile.url}")
-    private String nameApiUrl;
+    private String profileApiUrl;
 
     private final RestTemplate restTemplate;
 
@@ -34,16 +34,24 @@ public class MarketDataService {
 
     }
 
-    public String getStockName(String ticker) {
-        String url = nameApiUrl + "?symbol=" + ticker + "&token=" + apiKey;
+    public FinnhubCompanyProfileResponseDTO getCompanyProfile(String ticker) {
 
-        FinnhubNameResponseDTO response = restTemplate.getForObject(url, FinnhubNameResponseDTO.class);
+        String url = profileApiUrl
+                + "?symbol=" + ticker
+                + "&token=" + apiKey;
 
-        if (response != null) {
-            return response.getCompanyName();
-        } else {
-            throw new ResourceNotFoundException("Invalid ticker: " + ticker);
+        FinnhubCompanyProfileResponseDTO response =
+                restTemplate.getForObject(
+                        url,
+                        FinnhubCompanyProfileResponseDTO.class
+                );
+
+        if (response != null && response.getCompanyName() != null) {
+            return response;
         }
-    }
 
+        throw new ResourceNotFoundException(
+                "Invalid ticker: " + ticker
+        );
+    }
 }

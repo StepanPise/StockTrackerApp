@@ -5,11 +5,14 @@ import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
 
-@Getter @Setter
+@Getter
+@Setter
 @NoArgsConstructor
 @AllArgsConstructor
 public class StockResponseDTO {
+
     private Long id;
     private String name;
     private String ticker;
+    private String logoUrl;
 }

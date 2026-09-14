@@ -19,6 +19,8 @@ public class AlertMapper {
 
         dto.setUserEmail(alert.getUser().getEmail());
         dto.setStockTicker(alert.getStock().getTicker());
+        dto.setStockName(alert.getStock().getName());
+        dto.setLogoUrl(alert.getStock().getLogoUrl());
 
         return dto;
     }

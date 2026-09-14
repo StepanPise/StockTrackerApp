@@ -1,8 +1,6 @@
 package com.stocktrack.stocktrack.Entity;
 
 import jakarta.persistence.*;
-import jakarta.validation.constraints.NotBlank;
-import jakarta.validation.constraints.Size;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
@@ -23,6 +21,9 @@ public class Stock {
 
     @Column(nullable = false, unique = true, length = 10)
     private String ticker;
+
+    @Column(length = 500)
+    private String logoUrl;
 
     @OneToMany(mappedBy = "stock", cascade = CascadeType.ALL, orphanRemoval = true)
     private List<Alert> alerts = new ArrayList<>();

@@ -1,5 +1,6 @@
 package com.stocktrack.stocktrack.Service;
 
+import com.stocktrack.stocktrack.DTO.FinnhubDTOs.FinnhubCompanyProfileResponseDTO;
 import com.stocktrack.stocktrack.DTO.Request.AlertRequestDTO;
 import com.stocktrack.stocktrack.DTO.Response.AlertResponseDTO;
 import com.stocktrack.stocktrack.Exception.ResourceNotFoundException;
@@ -43,11 +44,27 @@ public class AlertService {
 
     private Stock getOrCreateStock(String ticker) {
         return stockRepository.findByTicker(ticker)
+                .map(stock -> {
+                    if (stock.getLogoUrl() == null) {
+                        FinnhubCompanyProfileResponseDTO profile =
+                                marketDataService.getCompanyProfile(ticker);
+
+                        stock.setLogoUrl(profile.getLogo());
+
+                        return stockRepository.save(stock);
+                    }
+
+                    return stock;
+                })
                 .orElseGet(() -> {
-                    String companyName = marketDataService.getStockName(ticker);
+                    FinnhubCompanyProfileResponseDTO profile =
+                            marketDataService.getCompanyProfile(ticker);
+
                     Stock newStock = new Stock();
                     newStock.setTicker(ticker);
-                    newStock.setName(companyName);
+                    newStock.setName(profile.getCompanyName());
+                    newStock.setLogoUrl(profile.getLogo());
+
                     return stockRepository.save(newStock);
                 });
     }

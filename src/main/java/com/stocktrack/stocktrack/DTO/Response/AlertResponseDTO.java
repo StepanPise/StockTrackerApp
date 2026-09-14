@@ -15,6 +15,7 @@ public class AlertResponseDTO {
     private Long id;
     private String name;
     private double targetPrice;
+    private String logoUrl;
     private ConditionType conditionType;
     private LocalDateTime createdAt;
 
@@ -22,5 +23,6 @@ public class AlertResponseDTO {
 //  private Long userId;
     private String userEmail;
     private String stockTicker;
+    private String stockName;
     private boolean isActive;
 }

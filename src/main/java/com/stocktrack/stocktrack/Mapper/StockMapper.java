@@ -7,17 +7,19 @@ import org.springframework.stereotype.Component;
 
 @Component
 public class StockMapper {
+
     public StockResponseDTO mapToResponseDTO(Stock stock) {
         StockResponseDTO dto = new StockResponseDTO();
         dto.setId(stock.getId());
         dto.setName(stock.getName());
         dto.setTicker(stock.getTicker());
+        dto.setLogoUrl(stock.getLogoUrl());
+
         return dto;
     }
 
     public Stock mapToEntity(StockRequestDTO dto) {
         Stock stock = new Stock();
-        stock.setName(dto.getName());
         stock.setTicker(dto.getTicker().toUpperCase());
         return stock;
     }

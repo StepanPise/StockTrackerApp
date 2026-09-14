@@ -1,5 +1,6 @@
 package com.stocktrack.stocktrack.Service;
 
+import com.stocktrack.stocktrack.DTO.FinnhubDTOs.FinnhubCompanyProfileResponseDTO;
 import com.stocktrack.stocktrack.DTO.Request.AlertRequestDTO;
 import com.stocktrack.stocktrack.DTO.Response.AlertResponseDTO;
 import com.stocktrack.stocktrack.Entity.Alert;
@@ -32,12 +33,16 @@ public class AlertServiceTest {
 
     @Mock
     private AlertRepository alertRepository;
+
     @Mock
     private StockRepository stockRepository;
+
     @Mock
     private MarketDataService marketDataService;
+
     @Mock
     private AlertMapper alertMapper;
+
     @InjectMocks
     private AlertService alertService;
 
@@ -61,6 +66,7 @@ public class AlertServiceTest {
 
         assertNotNull(result);
         assertEquals(10L, result.getId());
+
         verify(alertRepository, times(1)).findById(10L);
     }
 
@@ -79,14 +85,16 @@ public class AlertServiceTest {
 
         when(alertRepository.findById(10L)).thenReturn(Optional.of(alert));
 
-        assertThrows(AccessDeniedException.class,
-                () -> alertService.getAlertById(10L, currentUser));
+        assertThrows(
+                AccessDeniedException.class,
+                () -> alertService.getAlertById(10L, currentUser)
+        );
 
         verifyNoInteractions(alertMapper);
     }
 
     @Test
-    @DisplayName("addAlert: Should fetch stock from market data and save alert when stock is new")
+    @DisplayName("addAlert: Should fetch company profile and save alert when stock is new")
     void addAlert_StockDoesNotExist_CreatesStockAndSavesAlert() {
         User currentUser = new User();
         currentUser.setId(1L);
@@ -94,18 +102,22 @@ public class AlertServiceTest {
         AlertRequestDTO requestDto = new AlertRequestDTO();
         requestDto.setTicker("AAPL");
 
+        FinnhubCompanyProfileResponseDTO profile = new FinnhubCompanyProfileResponseDTO();
+        profile.setCompanyName("Apple Inc.");
+        profile.setLogo("https://example.com/apple.png");
+
         Stock newStock = new Stock();
         newStock.setTicker("AAPL");
         newStock.setName("Apple Inc.");
+        newStock.setLogoUrl("https://example.com/apple.png");
 
         Alert mappedAlert = new Alert();
         Alert savedAlert = new Alert();
         AlertResponseDTO expectedDto = new AlertResponseDTO();
 
         when(stockRepository.findByTicker("AAPL")).thenReturn(Optional.empty());
-        when(marketDataService.getStockName("AAPL")).thenReturn("Apple Inc.");
+        when(marketDataService.getCompanyProfile("AAPL")).thenReturn(profile);
         when(stockRepository.save(any(Stock.class))).thenReturn(newStock);
-
         when(alertMapper.mapToEntity(requestDto, currentUser, newStock)).thenReturn(mappedAlert);
         when(alertRepository.save(mappedAlert)).thenReturn(savedAlert);
         when(alertMapper.mapToResponseDTO(savedAlert)).thenReturn(expectedDto);
@@ -113,7 +125,8 @@ public class AlertServiceTest {
         AlertResponseDTO result = alertService.addAlert(requestDto, currentUser);
 
         assertNotNull(result);
-        verify(marketDataService, times(1)).getStockName("AAPL");
+
+        verify(marketDataService, times(1)).getCompanyProfile("AAPL");
         verify(stockRepository, times(1)).save(any(Stock.class));
         verify(alertRepository, times(1)).save(mappedAlert);
     }

@@ -71,7 +71,6 @@ public class StockService {
 
         validateTickerUniqueness(stockRequestDTO.getTicker(), existingStock.getTicker());
 
-        existingStock.setName(stockRequestDTO.getName());
         existingStock.setTicker(stockRequestDTO.getTicker());
 
         return stockMapper.mapToResponseDTO(existingStock);

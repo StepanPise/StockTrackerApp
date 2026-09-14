@@ -6,8 +6,11 @@ import lombok.Setter;
 
 @Getter
 @Setter
-public class FinnhubNameResponseDTO {
+public class FinnhubCompanyProfileResponseDTO {
 
     @JsonProperty("name")
     private String companyName;
+
+    @JsonProperty("logo")
+    private String logo;
 }
