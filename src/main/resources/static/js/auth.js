@@ -1,16 +1,18 @@
 function checkAuthState() {
     const token = localStorage.getItem('jwt_token');
+
     if (token) {
         document.getElementById('auth-section').classList.add('hidden');
         document.getElementById('dashboard-section').classList.remove('hidden');
 
         const payload = parseJwt(token);
+
         if (payload && payload.sub) {
             document.getElementById('user-email').textContent = payload.sub;
         }
 
         fetchAlerts();
-        fetchNotificationSettings();
+        fetchWebhooks();
         fetchStocks();
     } else {
         document.getElementById('auth-section').classList.remove('hidden');

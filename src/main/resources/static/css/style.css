@@ -20,6 +20,9 @@ body {
     margin: 0 auto;
 }
 
+
+/* HEADER */
+
 header {
     display: flex;
     justify-content: space-between;
@@ -46,6 +49,9 @@ header h1 {
     font-weight: 500;
 }
 
+
+/* GENERAL */
+
 .hidden {
     display: none !important;
 }
@@ -54,14 +60,23 @@ header h1 {
     background: var(--box-bg);
     padding: 20px;
     border-radius: 8px;
-    box-shadow: 0 4px 6px rgba(0,0,0,0.1);
+    box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
     margin-bottom: 20px;
     box-sizing: border-box;
+}
+
+.box-description {
+    font-size: 0.9em;
+    color: #666;
+    margin: 0 0 15px 0;
 }
 
 .sidebar .box:last-child {
     margin-bottom: 0;
 }
+
+
+/* GRID */
 
 .grid {
     display: grid;
@@ -69,6 +84,9 @@ header h1 {
     gap: 20px;
     align-items: start;
 }
+
+
+/* ALERTS BOX */
 
 .alerts-box {
     display: flex;
@@ -108,7 +126,11 @@ header h1 {
     background: #aaa;
 }
 
-input, select {
+
+/* FORMS */
+
+input,
+select {
     display: block;
     width: 100%;
     padding: 10px;
@@ -118,6 +140,17 @@ input, select {
     box-sizing: border-box;
     font-family: inherit;
 }
+
+.form-label {
+    display: block;
+    font-size: 0.85rem;
+    font-weight: 500;
+    color: #6b7280;
+    margin-bottom: 4px;
+}
+
+
+/* BUTTONS */
 
 .btn {
     padding: 10px 15px;
@@ -129,11 +162,28 @@ input, select {
     transition: all 0.2s;
 }
 
-.btn:hover { opacity: 0.85; }
-.btn-blue { background: var(--primary); color: white; }
-.btn-green { background: var(--success); color: white; }
-.btn-red { background: var(--danger); color: white; }
-.w-100 { width: 100%; }
+.btn:hover {
+    opacity: 0.85;
+}
+
+.btn-blue {
+    background: var(--primary);
+    color: white;
+}
+
+.btn-green {
+    background: var(--success);
+    color: white;
+}
+
+.btn-red {
+    background: var(--danger);
+    color: white;
+}
+
+.w-100 {
+    width: 100%;
+}
 
 .btn-outline {
     background: transparent;
@@ -148,6 +198,9 @@ input, select {
     border-color: #9ca3af;
     opacity: 1;
 }
+
+
+/* ALERT ITEMS */
 
 .alert-item {
     display: flex;
@@ -165,6 +218,19 @@ input, select {
     align-items: center;
     gap: 15px;
 }
+
+.alert-info h4 {
+    margin: 0 0 5px 0;
+}
+
+.alert-info p {
+    margin: 0;
+    font-size: 0.9em;
+    color: #666;
+}
+
+
+/* STOCK LOGO */
 
 .stock-logo {
     width: 42px;
@@ -189,6 +255,9 @@ input, select {
     font-size: 0.9em;
 }
 
+
+/* INACTIVE ALERT */
+
 .alert-item.inactive {
     background-color: #f1f3f5;
     border-color: #e2e8f0;
@@ -207,6 +276,9 @@ input, select {
     background: #5a6268;
 }
 
+
+/* TRIGGERED BADGE */
+
 .badge-triggered {
     display: inline-block;
     font-size: 0.75rem;
@@ -220,16 +292,72 @@ input, select {
     vertical-align: middle;
 }
 
-.form-label {
-    display: block;
-    font-size: 0.85rem;
-    font-weight: 500;
-    color: #6b7280;
-    margin-bottom: 4px;
+
+/* MESSAGES */
+
+.msg {
+    font-size: 0.9em;
+    margin-top: 10px;
 }
 
-.alert-info h4 { margin: 0 0 5px 0; }
-.alert-info p { margin: 0; font-size: 0.9em; color: #666; }
-.msg { font-size: 0.9em; margin-top: 10px; }
-.error { color: var(--danger); }
-.success { color: var(--success); }
+.error {
+    color: var(--danger);
+}
+
+.success {
+    color: var(--success);
+}
+
+
+/* WEBHOOKS */
+
+.webhooks-list {
+    margin-top: 20px;
+}
+
+.webhooks-empty {
+    color: #777;
+    font-size: 0.9em;
+    margin: 0;
+}
+
+.webhook-item {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    gap: 15px;
+    padding: 12px;
+    margin-bottom: 10px;
+    border: 1px solid #ddd;
+    border-radius: 6px;
+    background: #fafafa;
+}
+
+.webhook-info {
+    display: flex;
+    flex-direction: column;
+    gap: 3px;
+    min-width: 0;
+}
+
+.webhook-info strong {
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+}
+
+.webhook-info span {
+    font-size: 0.8em;
+    color: #777;
+}
+
+.webhook-actions {
+    display: flex;
+    gap: 8px;
+    flex-shrink: 0;
+}
+
+.webhook-form-buttons {
+    display: flex;
+    gap: 10px;
+}

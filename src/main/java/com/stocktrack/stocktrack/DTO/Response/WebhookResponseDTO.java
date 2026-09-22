@@ -1,6 +1,6 @@
 package com.stocktrack.stocktrack.DTO.Response;
 
-import com.stocktrack.stocktrack.Entity.Enum.NotificationType;
+import com.stocktrack.stocktrack.Entity.Enum.WebhookType;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
@@ -10,10 +10,10 @@ import lombok.Setter;
 @Setter
 @NoArgsConstructor
 @AllArgsConstructor
-public class NotificationSettingsResponseDTO {
+public class WebhookResponseDTO {
 
     private Long id;
-    private NotificationType type;
-    private String email;
-    private String webhookUrl;
+    private String name;
+    private WebhookType type;
+    private String url;
 }

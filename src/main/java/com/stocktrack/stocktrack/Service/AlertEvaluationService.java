@@ -26,7 +26,7 @@ public class AlertEvaluationService {
     private final NotificationService notificationService;
 
     // 60 000 ms (1 minute)
-    @Scheduled(fixedDelay = 60000)
+    @Scheduled(fixedDelay = 10000)
     @Transactional
     public void evaluateActiveAlerts() {
         List<Alert> activeAlerts = alertRepository.findByIsActiveTrue();

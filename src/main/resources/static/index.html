@@ -3,108 +3,285 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
     <title>StockTrack Dashboard</title>
+
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+
+    <link
+            href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap"
+            rel="stylesheet"
+    >
+
     <link rel="stylesheet" href="css/style.css">
 </head>
+
 <body>
 
 <!-- AUTH SECTION -->
 <div id="auth-section" class="container">
+
     <h1>StockTrack</h1>
+
     <div class="box">
+
         <h2>Sign In / Register</h2>
-        <input type="email" id="authEmail" placeholder="Email (e.g. user@test.com)">
-        <input type="password" id="authPassword" placeholder="Password">
+
+        <input
+                type="email"
+                id="authEmail"
+                placeholder="Email (e.g. user@test.com)"
+        >
+
+        <input
+                type="password"
+                id="authPassword"
+                placeholder="Password"
+        >
 
         <div class="btn-group">
-            <button class="btn btn-blue" onclick="login()">Sign In</button>
-            <button class="btn btn-green" onclick="register()">Register</button>
+            <button
+                    class="btn btn-blue"
+                    onclick="login()">
+                Sign In
+            </button>
+
+            <button
+                    class="btn btn-green"
+                    onclick="register()">
+                Register
+            </button>
         </div>
+
         <p id="auth-msg" class="msg"></p>
+
     </div>
 </div>
 
-<!-- DASHBOARD SECTION (hidden without token) -->
+
+<!-- DASHBOARD SECTION -->
 <div id="dashboard-section" class="container hidden">
+
     <header>
+
         <h1>StockTrack</h1>
+
         <div class="user-profile">
-            <span id="user-email" class="user-email"></span>
-            <button class="btn btn-outline" onclick="logout()">Sign Out</button>
+
+            <span
+                    id="user-email"
+                    class="user-email">
+            </span>
+
+            <button
+                    class="btn btn-outline"
+                    onclick="logout()">
+                Sign Out
+            </button>
+
         </div>
+
     </header>
 
+
     <div class="grid">
-        <!-- LEFT COLUMN: FORMS -->
+
+        <!-- LEFT COLUMN -->
         <div class="sidebar">
+
             <!-- CREATE ALERT -->
             <div class="box">
+
                 <h2>New Alert</h2>
 
-                <label for="alertTicker" class="form-label">Stock Ticker</label>
-                <input list="stockList" id="alertTicker" placeholder="e.g. AAPL" autocomplete="off" maxlength="10">
+                <label
+                        for="alertTicker"
+                        class="form-label">
+                    Stock Ticker
+                </label>
+
+                <input
+                        list="stockList"
+                        id="alertTicker"
+                        placeholder="e.g. AAPL"
+                        autocomplete="off"
+                        maxlength="10"
+                >
+
                 <datalist id="stockList">
-                    <!-- Populated dynamically via fetchStocks() -->
+                    <!-- Populated dynamically -->
                 </datalist>
 
-                <label for="alertPrice" class="form-label">Target Price (USD)</label>
-                <input type="number" id="alertPrice" step="0.01" min="0.01" placeholder="e.g. 150.50">
 
-                <label for="alertCondition" class="form-label">Trigger Condition</label>
+                <label
+                        for="alertPrice"
+                        class="form-label">
+                    Target Price (USD)
+                </label>
+
+                <input
+                        type="number"
+                        id="alertPrice"
+                        step="0.01"
+                        min="0.01"
+                        placeholder="e.g. 150.50"
+                >
+
+
+                <label
+                        for="alertCondition"
+                        class="form-label">
+                    Trigger Condition
+                </label>
+
                 <select id="alertCondition">
-                    <option value="ABOVE">Price rises above</option>
-                    <option value="BELOW">Price drops below</option>
+
+                    <option value="ABOVE">
+                        Price rises above
+                    </option>
+
+                    <option value="BELOW">
+                        Price drops below
+                    </option>
+
                 </select>
 
-                <button class="btn btn-green w-100" onclick="createAlert()">Create Alert</button>
-                <p id="alert-msg" class="msg"></p>
-            </div>
 
-            <!-- NOTIFICATION SETTINGS -->
-            <div class="box">
-                <h2>Notifications</h2>
-                <p style="font-size: 0.9em; color: #666; margin-bottom: 15px;">
-                    Choose where to receive price trigger notifications.
+                <button
+                        class="btn btn-green w-100"
+                        onclick="createAlert()">
+                    Create Alert
+                </button>
+
+                <p
+                        id="alert-msg"
+                        class="msg">
                 </p>
 
-                <label for="notifType" class="form-label">Notification Method</label>
-                <select id="notifType" onchange="toggleNotificationFields()">
-                    <option value="WEBHOOK">Discord Webhook</option>
-                    <option value="EMAIL">Email</option>
+            </div>
+
+
+            <!-- WEBHOOKS -->
+            <div class="box">
+
+                <h2>Webhooks</h2>
+
+                <p class="box-description">
+                    Configure where you want to receive
+                    price trigger notifications.
+                </p>
+
+
+                <input
+                        type="hidden"
+                        id="webhookId"
+                >
+
+
+                <label
+                        for="webhookName"
+                        class="form-label">
+                    Name
+                </label>
+
+                <input
+                        type="text"
+                        id="webhookName"
+                        placeholder="e.g. My Discord"
+                        maxlength="100"
+                >
+
+
+                <label
+                        for="webhookType"
+                        class="form-label">
+                    Service
+                </label>
+
+                <select id="webhookType">
+
+                    <option value="DISCORD">
+                        Discord
+                    </option>
+
+                    <option value="SLACK">
+                        Slack
+                    </option>
+
                 </select>
 
-                <div id="webhookFieldContainer">
-                    <label for="notifWebhook" class="form-label">Discord Webhook URL</label>
-                    <input type="url" id="notifWebhook" placeholder="https://discord.com/api/webhooks/...">
+
+                <label
+                        for="webhookUrl"
+                        class="form-label">
+                    Webhook URL
+                </label>
+
+                <input
+                        type="url"
+                        id="webhookUrl"
+                        placeholder="https://..."
+                        maxlength="500"
+                >
+
+
+                <div class="webhook-form-buttons">
+
+                    <button
+                            id="webhook-submit-btn"
+                            class="btn btn-blue"
+                            onclick="submitWebhook()">
+                        Add Webhook
+                    </button>
+
+                    <button
+                            id="webhook-cancel-btn"
+                            class="btn btn-outline hidden"
+                            onclick="cancelWebhookEdit()">
+                        Cancel
+                    </button>
+
                 </div>
 
-                <div id="emailFieldContainer" class="hidden">
-                    <label for="notifEmail" class="form-label">Email Address</label>
-                    <input type="email" id="notifEmail" placeholder="your@email.com">
+
+                <p
+                        id="webhook-msg"
+                        class="msg">
+                </p>
+
+
+                <div
+                        id="webhooks-list"
+                        class="webhooks-list">
                 </div>
 
-                <button class="btn btn-blue w-100" onclick="saveNotificationSettings()">Save Settings</button>
-                <p id="notif-msg" class="msg"></p>
             </div>
+
         </div>
 
-        <!-- RIGHT COLUMN: ALERTS LIST -->
+
+        <!-- RIGHT COLUMN -->
         <div class="box alerts-box">
+
             <h2>Active Alerts</h2>
+
             <div id="alerts-list">
                 <p>Loading data...</p>
             </div>
+
         </div>
+
     </div>
+
 </div>
+
 
 <!-- JS -->
 <script src="js/utils.js"></script>
 <script src="js/auth.js"></script>
 <script src="js/dashboard.js"></script>
 <script src="js/app.js"></script>
+
 </body>
 </html>
