@@ -1,6 +1,6 @@
 # StockTrack
 
-A RESTful web application for automated stock price monitoring. It combines scheduled market data retrieval from an external API with custom alerts delivered via external webhooks (e.g., Discord, Slack).
+A RESTful web application for automated stock price monitoring. It combines scheduled market data retrieval from an external API with custom alerts delivered via external webhooks (Discord, Slack).
 
 Built with a Spring Boot backend featuring stateless JWT authentication, strict user data isolation, and a Vanilla JavaScript frontend.
 
@@ -11,7 +11,7 @@ Built with a Spring Boot backend featuring stateless JWT authentication, strict 
 ### Prerequisites
 
 * Docker Desktop
-* Java 17+ *(only if running locally outside Docker)*
+* Java 21+ *(only if running locally outside Docker)*
 * A valid [Finnhub API key](https://finnhub.io/)
 
 ### Run the Application
@@ -62,13 +62,14 @@ Set the generated value as `JWT_SECRET_KEY` in the `.env` file.
 
 ## Main Features
 
-* **Automated Price Monitoring** — Scheduled market data retrieval every minute with evaluation of user-defined price thresholds.
-* **Instant Notifications** — Alerts delivered via external webhooks when target prices are reached.
+* **Automated Price Monitoring** — Scheduled market data retrieval every 10 seconds with evaluation of user-defined price thresholds.
+* **Webhook Notifications** — Alerts delivered via external webhooks when target prices are reached.
+* **Multiple Webhooks** — Users can configure multiple notification webhooks for flexible alert delivery.
 * **Secure Authentication** — Stateless JWT-based registration and login.
-* **User Data Isolation** — Users can only access and modify their own alerts.
+* **User Data Isolation** — Users can only access and modify their own alerts and webhooks.
 
 
-<img width="100%" height="786" alt="image" src="https://github.com/user-attachments/assets/9a50f424-0a29-4d99-9ee6-56efcd7828fe" />
+<img width="90%" height="90%" alt="image" src="https://github.com/user-attachments/assets/e82a8bf4-0d8c-4312-85c2-948c0d25cb37" />
 
 
 <!-- Add database schema image here -->
